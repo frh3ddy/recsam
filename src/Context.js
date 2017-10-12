@@ -1,31 +1,30 @@
-import React from "react";
-const Context = require("samsarajs").DOM.Context;
+import React from 'react'
+import PropTypes from 'prop-types'
+const Context = require('samsarajs').DOM.Context
 
-export default class SContext extends React.Component {
-  constructor(props) {
-    super(props);
-    this.sContext = new Context();
-    this.renderChildren = this.renderChildren.bind(this);
+export default class SamsaraContext extends React.Component {
+  constructor (props) {
+    super(props)
+    this.sContext = new Context()
   }
 
-  componentDidMount() {
-    this.sContext.mount(this.refs.rootContext);
+  getChildContext () {
+    return { parent: this.sContext }
   }
 
-  renderChildren() {
-    const parent = this.sContext;
-    return React.Children.map(this.props.children, child => {
-      return React.cloneElement(child, {
-        parent
-      });
-    });
+  componentDidMount () {
+    this.sContext.mount(this.refs.rootContext)
   }
 
-  render() {
+  render () {
     return (
-      <div ref="rootContext">
-        {this.renderChildren()}
+      <div ref='rootContext'>
+        {this.props.children}
       </div>
-    );
+    )
   }
+}
+
+SamsaraContext.childContextTypes = {
+  parent: PropTypes.object
 }
