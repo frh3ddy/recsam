@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 export default class OnClick extends React.Component {
   constructor (props, context) {
     super(props)
-    context.parent.setClickHandler(props.signal)
+    context.view.setClickHandler(props.signal)
   }
 
   getChildContext () {
@@ -27,5 +27,6 @@ OnClick.childContextTypes = {
 }
 
 OnClick.contextTypes = {
-  parent: PropTypes.object
+  parent: PropTypes.object,
+  view: PropTypes.object
 }

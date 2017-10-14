@@ -2,28 +2,32 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import ViewNode from './ViewNode'
 import deepEqual from 'deep-equal'
+const Transitionable = require('samsarajs').Core.Transitionable
 const SequentialLayout = require('samsarajs').Layouts.SequentialLayout
+const FlexibleLayout = require('samsarajs').Layouts.FlexibleLayout
 
 export default class Panel extends React.Component {
   constructor (props, context) {
     super(props)
-    let method = 'add'
+    const method = getMethod(context.parent)
+    const flex = props.height || props.width ? undefined : 1
 
-    if (context.parent instanceof SequentialLayout) {
-      method = 'push'
-    }
-
-    this.node = new ViewNode({
+    const view = new ViewNode({
       color: props.color,
-      size: [props.width, props.height]
+      width: props.width,
+      height: props.height,
+      alignment: props.alignment,
+      translation: [props.x, props.y, props.z]
     })
+    this.view = view
+    this.node = view.node
 
-    this.node.setTranslation([props.x, props.y, props.z])
-    context.parent[method](this.node)
+    context.parent[method](view, flex)
+    // setTimeout(() => context.parent[method](view), 0)
   }
 
   getChildContext () {
-    return { parent: this.node }
+    return { parent: this.node, view: this.view }
   }
 
   componentDidUpdate (prevProps) {
@@ -38,12 +42,15 @@ export default class Panel extends React.Component {
 
     if (deepEqual(oldProps, props)) return
     // console.log(this.node._cachedSpec.size[0] * 50 / 100);
-    this.node.setTranslation([this.props.x, this.props.y, this.props.z])
-    this.node.setSize([this.props.width, this.props.height])
+    this.view.setTranslation([this.props.x, this.props.y, this.props.z])
+    this.view.setSize([this.props.width, this.props.height])
   }
 
   componentWillUnmount () {
-    setTimeout(() => this.node.remove(), 0)
+    if (getMethod(this.context.parent) === 'push') {
+      this.context.parent.unlink(this.view)
+    }
+    setTimeout(() => this.view.remove(), 0)
   }
 
   render () {
@@ -52,11 +59,23 @@ export default class Panel extends React.Component {
 }
 
 Panel.childContextTypes = {
-  parent: PropTypes.object
+  parent: PropTypes.object,
+  view: PropTypes.object
 }
 
 Panel.contextTypes = {
   parent: PropTypes.object
+}
+
+function getMethod (parent) {
+  switch (true) {
+    case parent instanceof SequentialLayout:
+      return 'push'
+    case parent instanceof FlexibleLayout:
+      return 'push'
+    default:
+      return 'add'
+  }
 }
 
 // import React from "react";

@@ -1,24 +1,19 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
-const Surface = require('samsarajs').DOM.Surface
+import ViewSuface from './ViewSurface'
 const SequentialLayout = require('samsarajs').Layouts.SequentialLayout
-// const Transform = require('samsarajs').Core.Transform
+const FlexibleLayout = require('samsarajs').Layouts.FlexibleLayout
 
 export default class SSurface extends React.Component {
   constructor (props, context) {
     super(props)
-    let method = 'add'
+    const method = getMethod(context.parent)
     this.state = { deploy: false, hasError: false }
-    this.surface = new Surface()
-
-    // this.surface.on('deploy', target => {
-    //   setTimeout(() => this.setState({ deploy: true }), 0)
-    // })
-
-    if (context.parent instanceof SequentialLayout) {
-      method = 'push'
-    }
+    this.surface = new ViewSuface({
+      color: props.color
+    })
+    this.fragment = document.createElement('div')
 
     context.parent[method](this.surface)
   }
@@ -27,36 +22,49 @@ export default class SSurface extends React.Component {
     // setTimeout Temporary Fix to allow the layout to be calculated
     // before the content is dislayed in the wrong place
     // its only for few milliseoncons but noticeable
-    setTimeout(() => this.setState({ deploy: true }), 10)
+    this.surface.setContent(this.fragment)
+    setTimeout(() => this.setState({ deploy: true }), 20)
   }
 
   componentDidUpdate (prevProps) {
-    this.surface.setOptions({
-      size: [this.props.width, this.props.height],
-      properties: {
-        background: this.props.color || 'rgba(255,255,255,0)'
-      }
-    })
+    if (this.props.alignment) {
+      this.surface.setAlignment(this.props.alignment)
+    } else {
+      this.surface.resize([this.props.width, this.props.height])
+    }
+    if (this.props.color) this.surface.setColor(this.props.color)
+    this.surface.setContent(this.fragment)
   }
 
   componentWillUnmount () {
-    if (this.context.parent instanceof SequentialLayout) {
+    if (getMethod(this.context.parent) === 'push') {
       this.context.parent.unlink(this.surface)
     }
     setTimeout(() => this.surface.remove(), 0)
   }
 
   render () {
-    if (this.state.deploy) {
-      return ReactDOM.createPortal(
-        this.props.children,
-        this.surface._currentTarget
-      )
-    }
-    return null
+    // if (this.state.deploy) {
+    //   return ReactDOM.createPortal(
+    //     this.props.children,
+    //     this.surface.getTarget()
+    //   )
+    // }
+    return ReactDOM.createPortal(this.props.children, this.fragment)
   }
 }
 
 SSurface.contextTypes = {
   parent: PropTypes.object
+}
+
+function getMethod (parent) {
+  switch (true) {
+    case parent instanceof SequentialLayout:
+      return 'push'
+    case parent instanceof FlexibleLayout:
+      return 'push'
+    default:
+      return 'add'
+  }
 }

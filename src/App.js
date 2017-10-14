@@ -9,11 +9,16 @@ import { connect } from '@cerebral/react'
 
 const ActionButtons = createNamedComponent('StackPanel')
 const Button = createNamedComponent()
+const Panel = createNamedComponent()
 const Text = createNamedComponent('Surface')
-const NavBar = createNamedComponent()
+const NavBar = createNamedComponent('StackPanel')
+const StackPanel = createNamedComponent('FlexStackPanel')
+const Content = createNamedComponent('StackPanel')
 const AlbumList = createNamedComponent()
 const Albums = createNamedComponent('StackPanel')
-const Album = createNamedComponent('Surface')
+const Album = createNamedComponent()
+const Line = createNamedComponent()
+const Rest = createNamedComponent()
 
 export default connect(
   {
@@ -28,36 +33,40 @@ export default connect(
       const { size, itemAdded, itemRemoved } = this.props
       return (
         <Context>
-          <NavBar height={60}>
-            <ActionButtons itemSpacing={10}>
-              <Button width={100} color='#ffad02'>
-                <OnClick signal={itemAdded} />
-                <Text>ADD</Text>
-              </Button>
-              <Button width={100} color='#ffad02'>
-                <OnClick signal={itemRemoved} />
-                <Text>REMOVED</Text>
-              </Button>
-              <Button width={100} color='#ffad02'>
-                <OnClick signal={itemAdded} />
-                <Text>Add</Text>
-              </Button>
-            </ActionButtons>
-          </NavBar>
-          <AlbumList width={size.width} height={size.height} y={60} x={400}>
-            <Albums orientation='vertical' itemSpacing={10}>
-              {this.props.items.map(({ color, text }, index) => (
-                <Album height={100} color={color} key={index}>
-                  {text}
-                </Album>
-              ))}
-            </Albums>
-          </AlbumList>
+          <StackPanel orientation='vertical'>
+            <Panel height={60} color='yellow'>
+              <Panel width={250} color='tomato'>
+                <Text alignment='center'>MENU</Text>
+              </Panel>
+            </Panel>
+            <StackPanel>
+              <Panel width={200} color='purple'>
+                <Panel color='white' height={50} alignment='bottom' />
+              </Panel>
+              <Panel color='green' />
+              <Panel width={250} color='black' />
+            </StackPanel>
+          </StackPanel>
         </Context>
       )
     }
   }
 )
+
+// <ActionButtons itemSpacing={10}>
+// <Button width={100} color='#ffad02'>
+//   <OnClick signal={itemAdded} />
+//   <Text color='red' alignment='center'>ADD</Text>
+// </Button>
+// <Button width={100} color='#ffad02'>
+//   <OnClick signal={itemRemoved} />
+//   <Text alignment='center'>REMOVED</Text>
+// </Button>
+// <Button width={100} color='#ffad02'>
+//   <OnClick signal={itemAdded} />
+//   <Text alignment='center'>Add</Text>
+// </Button>
+// </ActionButtons>
 
 // API ideas
 // Event Handlers
