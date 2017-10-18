@@ -6,16 +6,18 @@ const Transitionable = require('samsarajs').Core.Transitionable
 export default View.extend({
   defaults: {
     color: undefined,
+    minHeight: undefined,
     alignment: 'default',
     translation: [undefined, undefined, undefined]
   },
-  initialize ({ color, width, height, alignment, translation }) {
+  initialize ({ color, width, height, alignment, translation, minHeight }) {
     this.setTranslation(translation)
     const { origin, align } = getAlignment(alignment)
     this.origin = new Transitionable(origin)
     this.align = new Transitionable(align)
+    this.zise = new Transitionable([width, height])
     this.node = this.add({
-      size: [width, height],
+      size: this.zise,
       align: this.align,
       origin: this.origin
     })
@@ -29,7 +31,13 @@ export default View.extend({
       this.node.add(this.background)
     }
 
-    this.size = this.node.size
+    this.size = this.node.size.map(size => {
+      if (!size) return
+      if (minHeight && size[1] < minHeight) {
+        size[1] = minHeight
+      }
+      return size
+    })
   },
   setTranslation (vector) {
     const [x = 0, y = 0, z = 0] = vector

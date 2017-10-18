@@ -11,9 +11,11 @@ export default class SSurface extends React.Component {
     const method = getMethod(context.parent)
     this.state = { deploy: false, hasError: false }
     this.surface = new ViewSuface({
+      textColor: props.textColor,
       color: props.color
     })
     this.fragment = document.createElement('div')
+    this.fragment.setAttribute('style', 'width:100%; height: 100%; opacity: 0')
 
     context.parent[method](this.surface)
   }
@@ -23,17 +25,26 @@ export default class SSurface extends React.Component {
     // before the content is dislayed in the wrong place
     // its only for few milliseoncons but noticeable
     this.surface.setContent(this.fragment)
-    setTimeout(() => this.setState({ deploy: true }), 20)
+    setTimeout(() => this.setState({ deploy: true }), 0)
   }
 
   componentDidUpdate (prevProps) {
+    this.surface.setContent(this.fragment)
     if (this.props.alignment) {
       this.surface.setAlignment(this.props.alignment)
     } else {
       this.surface.resize([this.props.width, this.props.height])
     }
     if (this.props.color) this.surface.setColor(this.props.color)
-    this.surface.setContent(this.fragment)
+    // this.surface.setContent(this.fragment)
+    setTimeout(
+      () =>
+        this.fragment.setAttribute(
+          'style',
+          'width:100%; height: 100%; opacity: 1'
+        ),
+      0
+    )
   }
 
   componentWillUnmount () {
@@ -44,12 +55,6 @@ export default class SSurface extends React.Component {
   }
 
   render () {
-    // if (this.state.deploy) {
-    //   return ReactDOM.createPortal(
-    //     this.props.children,
-    //     this.surface.getTarget()
-    //   )
-    // }
     return ReactDOM.createPortal(this.props.children, this.fragment)
   }
 }

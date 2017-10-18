@@ -4,15 +4,22 @@ import Context from './Context'
 import OnClick from './OnClick'
 import createNamedComponent from './createNamedComponent'
 import { state, signal } from 'cerebral/tags'
-
+import heart from './images/heart.svg'
+import share from './images/share-2.svg'
+import bookmark from './images/bookmarking.svg'
 import { connect } from '@cerebral/react'
+import NewText from './Text'
 
 const ActionButtons = createNamedComponent('StackPanel')
 const Button = createNamedComponent()
+const Logo = createNamedComponent()
 const Panel = createNamedComponent()
+const SearchBar = createNamedComponent()
 const Text = createNamedComponent('Surface')
+const Surface = createNamedComponent('Surface')
 const NavBar = createNamedComponent('StackPanel')
-const StackPanel = createNamedComponent('FlexStackPanel')
+const FlexStackPanel = createNamedComponent('FlexStackPanel')
+const StackPanel = createNamedComponent('StackPanel')
 const Content = createNamedComponent('StackPanel')
 const AlbumList = createNamedComponent()
 const Albums = createNamedComponent('StackPanel')
@@ -33,20 +40,168 @@ export default connect(
       const { size, itemAdded, itemRemoved } = this.props
       return (
         <Context>
-          <StackPanel orientation='vertical'>
-            <Panel height={60} color='yellow'>
-              <Panel width={250} color='tomato'>
-                <Text alignment='center'>MENU</Text>
-              </Panel>
+          <FlexStackPanel orientation='vertical'>
+            <Panel height={60}>
+              <FlexStackPanel>
+                <Logo width={120} color='#ffad02'>
+                  <Text alignment='center' textColor='#3e1b0a'>CINEPLEX</Text>
+                </Logo>
+                <Button width={120}>
+                  <Text alignment='center'>Movies</Text>
+                </Button>
+                <Button width={120}>
+                  <Text alignment='center'>TV Shows</Text>
+                </Button>
+                <Button width={120}>
+                  <Text alignment='center'>News</Text>
+                </Button>
+                <SearchBar flex={1}>
+                  <Surface>
+                    <input
+                      placeholder='Search title'
+                      style={{
+                        padding: '0 10px',
+                        fontSize: 22,
+                        height: '100%',
+                        width: '100%'
+                      }}
+                    />
+                  </Surface>
+                </SearchBar>
+                <Panel width={120}>
+                  <Text alignment='center'>Profile</Text>
+                </Panel>
+              </FlexStackPanel>
+              <Panel color='black' height={0.5} alignment='bottom' />
             </Panel>
-            <StackPanel>
-              <Panel width={200} color='purple'>
-                <Panel color='white' height={50} alignment='bottom' />
-              </Panel>
-              <Panel color='green' />
-              <Panel width={250} color='black' />
-            </StackPanel>
-          </StackPanel>
+            <FlexStackPanel flex={1}>
+              <FlexStackPanel width={200} orientation='vertical'>
+                <FlexStackPanel orientation='vertical' flex={1}>
+                  <Panel height={260}>
+                    <Panel
+                      height={180}
+                      width={150}
+                      alignment='center'
+                      color='#282223'
+                    />
+                  </Panel>
+                  <Panel alignment='horizontalCenter' width={150} height={60}>
+                    <Surface height>
+                      <h2 style={{ margin: 0 }}>The Martian</h2>
+                      <span style={{ color: '#ffad02', fontSize: 12 }}>
+                        The Martian
+                      </span>
+                    </Surface>
+                  </Panel>
+                  <Panel width={150} height={70} alignment='horizontalCenter'>
+                    <Surface>
+                      <h6 style={{ margin: '0 0 5px', color: '#bbb' }}>
+                        category
+                      </h6>
+                      <div style={{ marginTop: 10, display: 'flex' }}>
+                        <div
+                          style={{
+                            marginRight: 10,
+                            padding: 5,
+                            fontSize: 12,
+                            border: '1px solid #c3c3c3'
+                          }}
+                        >
+                          Adventure
+                        </div>
+                        <div
+                          style={{
+                            marginRight: 10,
+                            padding: 5,
+                            fontSize: 12,
+                            border: '1px solid #c3c3c3'
+                          }}
+                        >
+                          Action
+                        </div>
+                      </div>
+                    </Surface>
+                  </Panel>
+                  <Panel width={150} height={60} alignment='horizontalCenter'>
+                    <Surface>
+                      <h6 style={{ margin: '0 0 5px', color: '#bbb' }}>
+                        Relese date
+                      </h6>
+                      <span style={{ fontSize: 12 }}>
+                        2 Octuber 2015 (USA)
+                      </span>
+                    </Surface>
+                  </Panel>
+                  <Panel width={150} height={60} alignment='horizontalCenter'>
+                    <Surface>
+                      <h6 style={{ margin: '0 0 5px', color: '#bbb' }}>
+                        Length
+                      </h6>
+                      <span style={{ fontSize: 12 }}>
+                        2hr 40min
+                      </span>
+                    </Surface>
+                  </Panel>
+                  <Panel width={150} height={60} alignment='horizontalCenter'>
+                    <Surface>
+                      <h6 style={{ margin: '0 0 5px', color: '#bbb' }}>
+                        Director
+                      </h6>
+                      <span style={{ fontSize: 12 }}>
+                        Ridely Scott
+                      </span>
+                    </Surface>
+                  </Panel>
+                </FlexStackPanel>
+                <Panel height={40}>
+                  <Surface color='white'>
+                    <div
+                      style={{
+                        height: '100%',
+                        display: 'flex',
+                        borderTop: '1px solid #ccc'
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexGrow: 1,
+                          borderRight: '1px solid #ccc'
+                        }}
+                      >
+                        <img height='15' src={share} />
+                      </div>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexGrow: 1,
+                          borderRight: '1px solid #ccc'
+                        }}
+                      >
+                        <img height='15' src={heart} />
+                      </div>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexGrow: 1
+                        }}
+                      >
+                        <img height='15' src={bookmark} />
+                      </div>
+                    </div>
+                  </Surface>
+                </Panel>
+              </FlexStackPanel>
+              <Panel color='#ded6d4' flex={1} />
+              <Panel width={250} color='#726a71' />
+            </FlexStackPanel>
+          </FlexStackPanel>
         </Context>
       )
     }
@@ -80,70 +235,8 @@ export default connect(
 //   <template prop propWidthDefaulValue='default'></template>
 // </Each>
 
-// MAP UX Helper
+// MAP UX Helpe
 // <Map itmesORState='some.state.path'>
 //  {items =>
 //    items.map((item, key) => <Template someProp={item.someProp} key={key} />)}
 // </Map>
-
-// <Node height={50}>
-// <Surface>
-//   <div
-//     style={{
-//       height: "100%",
-//       display: "flex"
-//     }}
-//   >
-//     <div
-//       onClick={() => this.props.removedItem()}
-//       style={{
-//         cursor: "pointer",
-//         width: 100,
-//         color: "#3a1f11",
-//         background: "#ffad02",
-//         height: "100%",
-//         display: "flex",
-//         alignItems: "center",
-//         justifyContent: "center"
-//       }}
-//     >
-//       REMOVE
-//     </div>
-//     <div
-//       onClick={() => this.props.itemAdded()}
-//       style={{
-//         cursor: "pointer",
-//         width: 100,
-//         color: "#3a1f11",
-//         background: "#ffad02",
-//         height: "100%",
-//         display: "flex",
-//         alignItems: "center",
-//         justifyContent: "center"
-//       }}
-//     >
-//       ADD
-//     </div>
-//   </div>
-// </Surface>
-// <Node height={0.5} align="bottom">
-//   <Surface color="black" />
-// </Node>
-// </Node>
-// <Node y={50} width={200} />
-// <Node y={50} x={200}>
-// <Surface color="#ded6d4" />
-// </Node>
-// <Node y={50} width={250} align="right">
-// <StackPanel orientation="vertical" itemSpacing={20}>
-//   {this.props.items.map((item, index) => (
-//     <Surface height={100} key={index} color={item.color}>
-//       {item.text}
-//     </Surface>
-//   ))}
-// </StackPanel>
-// </Node>
-
-// const buttonStyle = {
-//   display: 'flex'
-// }

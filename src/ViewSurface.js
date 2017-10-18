@@ -5,16 +5,35 @@ const Surface = require('samsarajs').DOM.Surface
 
 export default View.extend({
   defaults: {
-    color: undefined
+    textColor: 'initial',
+    color: undefined,
+    height: undefined,
+    width: undefined,
+    target: undefined
   },
-  initialize ({ color }) {
+  initialize ({ color, textColor, width, height, target }) {
+    let size = [true, true]
     this.origin = new Transitionable([0, 0])
     this.align = new Transitionable([0, 0])
     const surfaceOrigin = this.origin.map(value => value)
     const nodeAlign = this.align.map(value => value)
 
-    this.surface = new Surface({ size: [true, true], origin: surfaceOrigin })
+    if (height || height) {
+      size = [width, height]
+    }
+
+    this.surface = new Surface({
+      properties: { color: textColor, background: color || '' },
+      size,
+      origin: surfaceOrigin,
+      target
+    })
     this.add({ align: nodeAlign }).add(this.surface)
+    // this.size = this.surface.size.map(value => {
+    //   console.log('jjjjj')
+    //   if (!value) return
+    //   return value
+    // })
   },
   setContent (content) {
     this.surface.setContent(content)
@@ -54,6 +73,8 @@ function getAlignment (align) {
       return { align: [1, 0.5], origin: [1, 0.5] }
     case 'horizontalCenter':
       return { align: [0.5, 0], origin: [0.5, 0] }
+    case 'verticalCenter':
+      return { align: [0, 0.5], origin: [0, 0.5] }
     case 'right':
       return { align: [1, 0], origin: [1, 0] }
     case 'bottom':

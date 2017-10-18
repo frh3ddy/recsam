@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 const SequentialLayout = require('samsarajs').Layouts.SequentialLayout
+const FlexibleLayout = require('samsarajs').Layouts.FlexibleLayout
 
 const DIRECTION = {
   horizontal: 0,
@@ -10,6 +11,9 @@ const DIRECTION = {
 export default class StackPanel extends React.Component {
   constructor (props, context) {
     super(props)
+    const flex = props.height || props.width ? undefined : 1
+    const method = getMethod(context.parent)
+
     const orientation = props.orientation || 'horizontal'
     const spacing = props.itemSpacing || 0
     this.node = new SequentialLayout({
@@ -18,7 +22,7 @@ export default class StackPanel extends React.Component {
       spacing
     })
 
-    context.parent.add(this.node)
+    context.parent[method](this.node, flex)
   }
 
   getChildContext () {
@@ -44,4 +48,15 @@ StackPanel.childContextTypes = {
 
 StackPanel.contextTypes = {
   parent: PropTypes.object
+}
+
+function getMethod (parent) {
+  switch (true) {
+    case parent instanceof SequentialLayout:
+      return 'push'
+    case parent instanceof FlexibleLayout:
+      return 'push'
+    default:
+      return 'add'
+  }
 }

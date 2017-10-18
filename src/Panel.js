@@ -10,9 +10,9 @@ export default class Panel extends React.Component {
   constructor (props, context) {
     super(props)
     const method = getMethod(context.parent)
-    const flex = props.height || props.width ? undefined : 1
 
     const view = new ViewNode({
+      minHeight: props.minHeight,
       color: props.color,
       width: props.width,
       height: props.height,
@@ -22,7 +22,7 @@ export default class Panel extends React.Component {
     this.view = view
     this.node = view.node
 
-    context.parent[method](view, flex)
+    context.parent[method](view, props.flex)
     // setTimeout(() => context.parent[method](view), 0)
   }
 
@@ -65,6 +65,19 @@ Panel.childContextTypes = {
 
 Panel.contextTypes = {
   parent: PropTypes.object
+}
+
+function getFlex ({ height, width, minHeight, minWidth }) {
+  switch (true) {
+    case width && minHeight:
+      return 1
+    case height && minWidth:
+      return 1
+    case width || height:
+      return undefined
+    default:
+      return 1
+  }
 }
 
 function getMethod (parent) {
