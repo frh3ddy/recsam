@@ -41,49 +41,42 @@ export default connect(
       return (
         <Context>
           <FlexStackPanel orientation='vertical'>
-            <Panel height={60}>
-              <FlexStackPanel>
-                <Logo width={120} color='#ffad02'>
-                  <Text alignment='center' textColor='#3e1b0a'>CINEPLEX</Text>
-                </Logo>
-                <Button width={120}>
-                  <Text alignment='center'>Movies</Text>
-                </Button>
-                <Button width={120}>
-                  <Text alignment='center'>TV Shows</Text>
-                </Button>
-                <Button width={120}>
-                  <Text alignment='center'>News</Text>
-                </Button>
-                <SearchBar flex={1}>
-                  <Surface>
-                    <input
-                      placeholder='Search title'
-                      style={{
-                        padding: '0 10px',
-                        fontSize: 22,
-                        height: '100%',
-                        width: '100%'
-                      }}
-                    />
-                  </Surface>
-                </SearchBar>
-                <Panel width={120}>
-                  <Text alignment='center'>Profile</Text>
-                </Panel>
-              </FlexStackPanel>
-              <Panel color='black' height={0.5} alignment='bottom' />
-            </Panel>
+            <FlexStackPanel height={60}>
+              <Logo width={120} color='#ffad02'>
+                <Text alignment='center' textColor='#3e1b0a'>CINEPLEX</Text>
+              </Logo>
+              <Button width={120}>
+                <Text alignment='center'>Movies</Text>
+              </Button>
+              <Button width={120}>
+                <Text alignment='center'>TV Shows</Text>
+              </Button>
+              <Button width={120}>
+                <Text alignment='center'>News</Text>
+              </Button>
+              <SearchBar flex={1}>
+                <Surface>
+                  <input
+                    placeholder='Search title'
+                    style={{
+                      padding: '0 10px',
+                      fontSize: 22,
+                      height: '100%',
+                      width: '100%'
+                    }}
+                  />
+                </Surface>
+              </SearchBar>
+              <Panel width={120}>
+                <Text alignment='center'>Profile</Text>
+              </Panel>
+            </FlexStackPanel>
+            <Panel color='black' height={0.5} />
             <FlexStackPanel flex={1}>
               <FlexStackPanel width={200} orientation='vertical'>
                 <FlexStackPanel orientation='vertical' flex={1}>
                   <Panel height={260}>
-                    <Panel
-                      height={180}
-                      width={150}
-                      alignment='center'
-                      color='#282223'
-                    />
+                    <Panel margin='25 40 25 40' color='#282223' />
                   </Panel>
                   <Panel alignment='horizontalCenter' width={150} height={60}>
                     <Surface height>

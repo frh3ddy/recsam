@@ -13,6 +13,7 @@ export default class Panel extends React.Component {
 
     const view = new ViewNode({
       minHeight: props.minHeight,
+      margin: props.margin,
       color: props.color,
       width: props.width,
       height: props.height,
