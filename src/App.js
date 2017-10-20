@@ -76,7 +76,7 @@ export default connect(
               <FlexStackPanel width={200} orientation='vertical'>
                 <FlexStackPanel orientation='vertical' flex={1}>
                   <Panel height={260}>
-                    <Panel margin='25 40 25 40' color='#282223' />
+                    <Panel margin='25 40' color='#282223' />
                   </Panel>
                   <Panel alignment='horizontalCenter' width={150} height={60}>
                     <Surface height>
@@ -86,7 +86,7 @@ export default connect(
                       </span>
                     </Surface>
                   </Panel>
-                  <Panel width={150} height={70} alignment='horizontalCenter'>
+                  <Panel margin='25 0' height={70} alignment='horizontalCenter'>
                     <Surface>
                       <h6 style={{ margin: '0 0 5px', color: '#bbb' }}>
                         category
@@ -115,7 +115,7 @@ export default connect(
                       </div>
                     </Surface>
                   </Panel>
-                  <Panel width={150} height={60} alignment='horizontalCenter'>
+                  <Panel margin='25 0' height={60} alignment='horizontalCenter'>
                     <Surface>
                       <h6 style={{ margin: '0 0 5px', color: '#bbb' }}>
                         Relese date
@@ -125,7 +125,7 @@ export default connect(
                       </span>
                     </Surface>
                   </Panel>
-                  <Panel width={150} height={60} alignment='horizontalCenter'>
+                  <Panel margin='25 0' height={60} alignment='horizontalCenter'>
                     <Surface>
                       <h6 style={{ margin: '0 0 5px', color: '#bbb' }}>
                         Length
@@ -135,7 +135,7 @@ export default connect(
                       </span>
                     </Surface>
                   </Panel>
-                  <Panel width={150} height={60} alignment='horizontalCenter'>
+                  <Panel margin='25 0' height={60} alignment='horizontalCenter'>
                     <Surface>
                       <h6 style={{ margin: '0 0 5px', color: '#bbb' }}>
                         Director

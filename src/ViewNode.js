@@ -110,16 +110,21 @@ function getMargins (margins, node) {
       return convertMargin(marginsNumber, node)
     case marginsNumber.length === 3:
       return convertMargin(marginsNumber, node)
+    case marginsNumber.length === 2:
+      return convertMargin(marginsNumber, node)
+    case marginsNumber.length === 1:
+      return convertMargin(marginsNumber, node)
     default:
-      return [0, 0]
+      return node
   }
 }
 
 function convertMargin (margins, node) {
   const length = margins.length
+  let leftTop
   switch (length) {
     case 4:
-      const leftTop = node.add({
+      leftTop = node.add({
         margins: [margins[0] / 2, margins[1] / 2],
         origin: [1, 1],
         align: [1, 1]
@@ -129,15 +134,29 @@ function convertMargin (margins, node) {
         margins: [margins[2] / 2, margins[3] / 2]
       })
     case 3:
-      const newt = node.add({
+      leftTop = node.add({
         margins: [margins[0] / 2, margins[1]],
         origin: [1, 0.5],
         align: [1, 0.5]
       })
 
-      return newt.add({
+      return leftTop.add({
         margins: [margins[2] / 2, 0]
       })
+    case 2:
+      return node.add({
+        margins: [margins[0], margins[1]],
+        origin: [0.5, 0.5],
+        align: [0.5, 0.5]
+      })
+    case 1:
+      return node.add({
+        margins: [margins[0], margins[0]],
+        origin: [0.5, 0.5],
+        align: [0.5, 0.5]
+      })
+    default:
+      return node
   }
   // const letfRight = margins[0] + margins[2]
   // const topBottom = margins[1] + margins[3]
