@@ -7,8 +7,10 @@ import { state, signal } from 'cerebral/tags'
 import heart from './images/heart.svg'
 import share from './images/share-2.svg'
 import bookmark from './images/bookmarking.svg'
+import chevron from './images/chevrons-down.svg'
 import { connect } from '@cerebral/react'
 import NewText from './Text'
+import glamorous from 'glamorous'
 
 const ActionButtons = createNamedComponent('StackPanel')
 const Button = createNamedComponent()
@@ -26,6 +28,20 @@ const Albums = createNamedComponent('StackPanel')
 const Album = createNamedComponent()
 const Line = createNamedComponent()
 const Rest = createNamedComponent()
+
+const Tag = glamorous.div({
+  marginRight: 10,
+  padding: 5,
+  fontSize: 12,
+  border: '1px solid #c3c3c3'
+})
+
+const Share = glamorous.div({
+  display: 'flex',
+  flexGrow: 1,
+  alignItems: 'center',
+  justifyContent: 'center'
+})
 
 export default connect(
   {
@@ -46,13 +62,37 @@ export default connect(
                 <Text alignment='center' textColor='#3e1b0a'>CINEPLEX</Text>
               </Logo>
               <Button width={120}>
-                <Text alignment='center'>Movies</Text>
+                <Text alignment='center'>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <span style={{ fontSize: 12 }}>Movies</span>
+                    <img
+                      style={{ height: 12, marginLeft: 5, marginTop: 0 }}
+                      src={chevron}
+                    />
+                  </div>
+                </Text>
               </Button>
               <Button width={120}>
-                <Text alignment='center'>TV Shows</Text>
+                <Text alignment='center'>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <span style={{ fontSize: 12 }}>TV Shows</span>
+                    <img
+                      style={{ height: 12, marginLeft: 5, marginTop: 0 }}
+                      src={chevron}
+                    />
+                  </div>
+                </Text>
               </Button>
               <Button width={120}>
-                <Text alignment='center'>News</Text>
+                <Text alignment='center'>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <span style={{ fontSize: 12 }}>News</span>
+                    <img
+                      style={{ height: 12, marginLeft: 5, marginTop: 0 }}
+                      src={chevron}
+                    />
+                  </div>
+                </Text>
               </Button>
               <SearchBar flex={1}>
                 <Surface>
@@ -82,7 +122,7 @@ export default connect(
                     <Surface height>
                       <h2 style={{ margin: 0 }}>The Martian</h2>
                       <span style={{ color: '#ffad02', fontSize: 12 }}>
-                        The Martian
+                        The Martian. 3D
                       </span>
                     </Surface>
                   </Panel>
@@ -92,26 +132,8 @@ export default connect(
                         category
                       </h6>
                       <div style={{ marginTop: 10, display: 'flex' }}>
-                        <div
-                          style={{
-                            marginRight: 10,
-                            padding: 5,
-                            fontSize: 12,
-                            border: '1px solid #c3c3c3'
-                          }}
-                        >
-                          Adventure
-                        </div>
-                        <div
-                          style={{
-                            marginRight: 10,
-                            padding: 5,
-                            fontSize: 12,
-                            border: '1px solid #c3c3c3'
-                          }}
-                        >
-                          Action
-                        </div>
+                        <Tag>Adventure</Tag>
+                        <Tag>Action</Tag>
                       </div>
                     </Surface>
                   </Panel>
@@ -155,38 +177,15 @@ export default connect(
                         borderTop: '1px solid #ccc'
                       }}
                     >
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          flexGrow: 1,
-                          borderRight: '1px solid #ccc'
-                        }}
-                      >
+                      <Share css={{ borderRight: '1px solid #ccc' }}>
                         <img height='15' src={share} />
-                      </div>
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          flexGrow: 1,
-                          borderRight: '1px solid #ccc'
-                        }}
-                      >
+                      </Share>
+                      <Share css={{ borderRight: '1px solid #ccc' }}>
                         <img height='15' src={heart} />
-                      </div>
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          flexGrow: 1
-                        }}
-                      >
+                      </Share>
+                      <Share>
                         <img height='15' src={bookmark} />
-                      </div>
+                      </Share>
                     </div>
                   </Surface>
                 </Panel>
