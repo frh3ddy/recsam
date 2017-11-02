@@ -1,11 +1,9 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
-export default class Node extends React.Component {
+export default class Move extends React.Component {
   constructor (props) {
     super(props)
-    this.x = props.x || 0
-    this.y = props.y || 0
-    this.z = props.z || 0
     const duration = props.duration || 500
     if (props.easing) {
       this.transition = getTransition(props)
@@ -15,29 +13,38 @@ export default class Node extends React.Component {
   }
 
   componentDidUpdate (prevProps) {
-    const duration = this.props.duration || 500
-    if (this.props.easing) {
-      this.transition = getTransition(this.props)
-    } else {
-      this.transition = { duration }
-    }
-    this.props.position.set(
-      [this.props.x, this.props.y, this.props.z],
-      this.transition
-    )
+    // const duration = this.props.duration || 500
+    // if (this.props.easing) {
+    //   this.transition = getTransition(this.props)
+    // } else {
+    //   this.transition = { duration }
+    // }
+    // this.props.position.set(
+    //   [this.props.x, this.props.y, this.props.z],
+    //   this.transition
+    // )
   }
 
   componentDidMount () {
-    this.props.position.set([this.x, this.y, this.z], this.transition)
+    this.context.view.updateTranslation([
+      this.props.x,
+      this.props.y,
+      this.props.z
+    ])
+    // this.props.position.set([this.x, this.y, this.z], this.transition)
   }
 
   componentWillUnmount () {
-    this.props.position.set([0, 0, 0])
+    this.context.view.updateTranslation([0, 0, 0])
   }
 
   render () {
     return null
   }
+}
+
+Move.contextTypes = {
+  view: PropTypes.object
 }
 
 function getTransition (props) {
@@ -61,3 +68,33 @@ function getTransition (props) {
       return { curve: easing, duration }
   }
 }
+
+// export default class OnClick extends React.Component {
+//   constructor (props, context) {
+//     super(props)
+//     context.view.setEventHandler(props.event, props.signal)
+//   }
+
+//   getChildContext () {
+//     return { parent: this.node }
+//   }
+
+//   componentDidUpdate (prevProps) {}
+
+//   componentDidMount () {}
+
+//   componentWillUnmount () {}
+
+//   render () {
+//     return null
+//   }
+// }
+
+// OnClick.childContextTypes = {
+//   parent: PropTypes.object
+// }
+
+// OnClick.contextTypes = {
+//   parent: PropTypes.object,
+//   view: PropTypes.object
+// }

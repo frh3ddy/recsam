@@ -11,7 +11,7 @@ const DIRECTION = {
 export default class FlexStackPanel extends React.Component {
   constructor (props, context) {
     super(props)
-    const flex = props.flex
+    const flex = getFlex(props)
     const method = getMethod(context.parent)
     const orientation = props.orientation || 'horizontal'
     const spacing = props.itemSpacing || 0
@@ -47,6 +47,10 @@ FlexStackPanel.childContextTypes = {
 
 FlexStackPanel.contextTypes = {
   parent: PropTypes.object
+}
+
+function getFlex ({ height, width, minHeight, minWidth }) {
+  return isNaN(width || minHeight || minWidth || height) ? 1 : undefined
 }
 
 function getMethod (parent) {

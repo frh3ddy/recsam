@@ -1,47 +1,111 @@
 import React, { Component } from 'react'
 import './App.css'
 import Context from './Context'
-import OnClick from './OnClick'
 import createNamedComponent from './createNamedComponent'
-import { state, signal } from 'cerebral/tags'
-import heart from './images/heart.svg'
-import share from './images/share-2.svg'
-import bookmark from './images/bookmarking.svg'
-import chevron from './images/chevrons-down.svg'
+import { state, signal, props } from 'cerebral/tags'
 import { connect } from '@cerebral/react'
-import NewText from './Text'
-import glamorous from 'glamorous'
+import Text from './Text'
+import Image from './Image'
+import On from './OnClick'
+import WhileTrue from './WhileTrue'
+import WhileFalse from './WhileFalse'
+import Move from './Move'
+import Change from './Change'
+import Set from './Set'
 
-const ActionButtons = createNamedComponent('StackPanel')
-const Button = createNamedComponent()
-const Logo = createNamedComponent()
+import arrowRight from './images/arrow-right.svg'
+import search from './images/search.svg'
+
 const Panel = createNamedComponent()
-const SearchBar = createNamedComponent()
-const Text = createNamedComponent('Surface')
-const Surface = createNamedComponent('Surface')
-const NavBar = createNamedComponent('StackPanel')
-const FlexStackPanel = createNamedComponent('FlexStackPanel')
+const MainContainer = createNamedComponent('FlexStackPanel')
 const StackPanel = createNamedComponent('StackPanel')
-const Content = createNamedComponent('StackPanel')
-const AlbumList = createNamedComponent()
-const Albums = createNamedComponent('StackPanel')
-const Album = createNamedComponent()
-const Line = createNamedComponent()
-const Rest = createNamedComponent()
+const SideNav = createNamedComponent()
+const Content = createNamedComponent()
 
-const Tag = glamorous.div({
-  marginRight: 10,
-  padding: 5,
-  fontSize: 12,
-  border: '1px solid #c3c3c3'
-})
+const t = {
+  easingBack: 'easeInOutCubic',
+  easing: 'easeOutCubic',
+  durationBack: 300,
+  duration: 400
+}
 
-const Share = glamorous.div({
-  display: 'flex',
-  flexGrow: 1,
-  alignItems: 'center',
-  justifyContent: 'center'
-})
+const MenuLink = connect(
+  {
+    navLink: state`navLinks.${props`text`}`,
+    navLinkClicked: signal`navLinkClicked`
+  },
+  class MenuLink extends Component {
+    state = {
+      hovered: false,
+      color: 'white'
+    }
+
+    clicked () {
+      this.setState({ active: true })
+    }
+
+    mouseleave () {
+      this.setState({ hovered: false, color: 'white' })
+    }
+
+    mouseenter () {
+      this.setState({ hovered: true, color: 'yellow' })
+    }
+
+    render () {
+      const { hovered } = this.state
+      const { text, navLink, navLinkClicked } = this.props
+      return (
+        <Panel margin='25 0 25' height={35}>
+          <On event='click' signal={() => navLinkClicked({ link: text })} />
+          <On event='mouseleave' signal={this.mouseleave.bind(this)} />
+          <On event='mouseenter' signal={this.mouseenter.bind(this)} />
+          <StackPanel itemSpacing={10}>
+            <Text alignment='centerLeft' color='white'>
+              <WhileTrue value={navLink.active}>
+                <Change x={45} z={45} {...t} />
+                <Change degreesY={35} {...t} />
+              </WhileTrue>
+              {text}
+            </Text>
+            <Image opacity={0} padding='5px' width={30} file={arrowRight}>
+              <WhileTrue value={navLink.active}>
+                <Set opacity={1} />
+                <Change x={50} easing='easeOutCubic' />
+              </WhileTrue>
+
+              <WhileFalse value={navLink.active}>
+                <Set opacity={0} />
+              </WhileFalse>
+
+              <WhileTrue value={hovered}>
+                <Change opacity={1} duration={100} />
+              </WhileTrue>
+            </Image>
+          </StackPanel>
+        </Panel>
+      )
+    }
+  }
+)
+
+const SearchBar = () => (
+  <Panel margin='25 5' border='1px solid white' cornerRadius='5px' height={30}>
+    <Text
+      color='white'
+      alignment='centerLeft'
+      padding='0 0 0 10px'
+      fontSize='12px'
+    >
+      Search
+    </Text>
+    <Image alignment='right' padding='7px 10px 7px 0' file={search} />
+  </Panel>
+)
+
+const Divider = () => (
+  <Panel opcaity={0.5} margin='0 20' height={0.5} color='white' />
+)
 
 export default connect(
   {
@@ -53,147 +117,33 @@ export default connect(
   },
   class App extends Component {
     render () {
-      const { size, itemAdded, itemRemoved } = this.props
       return (
         <Context>
-          <FlexStackPanel orientation='vertical'>
-            <FlexStackPanel height={60}>
-              <Logo width={120} color='#ffad02'>
-                <Text alignment='center' textColor='#3e1b0a'>CINEPLEX</Text>
-              </Logo>
-              <Button width={120}>
-                <Text alignment='center'>
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <span style={{ fontSize: 12 }}>Movies</span>
-                    <img
-                      style={{ height: 12, marginLeft: 5, marginTop: 0 }}
-                      src={chevron}
-                    />
-                  </div>
-                </Text>
-              </Button>
-              <Button width={120}>
-                <Text alignment='center'>
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <span style={{ fontSize: 12 }}>TV Shows</span>
-                    <img
-                      style={{ height: 12, marginLeft: 5, marginTop: 0 }}
-                      src={chevron}
-                    />
-                  </div>
-                </Text>
-              </Button>
-              <Button width={120}>
-                <Text alignment='center'>
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <span style={{ fontSize: 12 }}>News</span>
-                    <img
-                      style={{ height: 12, marginLeft: 5, marginTop: 0 }}
-                      src={chevron}
-                    />
-                  </div>
-                </Text>
-              </Button>
-              <SearchBar flex={1}>
-                <Surface>
-                  <input
-                    placeholder='Search title'
-                    style={{
-                      padding: '0 10px',
-                      fontSize: 22,
-                      height: '100%',
-                      width: '100%'
-                    }}
-                  />
-                </Surface>
-              </SearchBar>
-              <Panel width={120}>
-                <Text alignment='center'>Profile</Text>
-              </Panel>
-            </FlexStackPanel>
-            <Panel color='black' height={0.5} />
-            <FlexStackPanel flex={1}>
-              <FlexStackPanel width={200} orientation='vertical'>
-                <FlexStackPanel orientation='vertical' flex={1}>
-                  <Panel height={260}>
-                    <Panel margin='25 40' color='#282223' />
-                  </Panel>
-                  <Panel alignment='horizontalCenter' width={150} height={60}>
-                    <Surface height>
-                      <h2 style={{ margin: 0 }}>The Martian</h2>
-                      <span style={{ color: '#ffad02', fontSize: 12 }}>
-                        The Martian. 3D
-                      </span>
-                    </Surface>
-                  </Panel>
-                  <Panel margin='25 0' height={70} alignment='horizontalCenter'>
-                    <Surface>
-                      <h6 style={{ margin: '0 0 5px', color: '#bbb' }}>
-                        category
-                      </h6>
-                      <div style={{ marginTop: 10, display: 'flex' }}>
-                        <Tag>Adventure</Tag>
-                        <Tag>Action</Tag>
-                      </div>
-                    </Surface>
-                  </Panel>
-                  <Panel margin='25 0' height={60} alignment='horizontalCenter'>
-                    <Surface>
-                      <h6 style={{ margin: '0 0 5px', color: '#bbb' }}>
-                        Relese date
-                      </h6>
-                      <span style={{ fontSize: 12 }}>
-                        2 Octuber 2015 (USA)
-                      </span>
-                    </Surface>
-                  </Panel>
-                  <Panel margin='25 0' height={60} alignment='horizontalCenter'>
-                    <Surface>
-                      <h6 style={{ margin: '0 0 5px', color: '#bbb' }}>
-                        Length
-                      </h6>
-                      <span style={{ fontSize: 12 }}>
-                        2hr 40min
-                      </span>
-                    </Surface>
-                  </Panel>
-                  <Panel margin='25 0' height={60} alignment='horizontalCenter'>
-                    <Surface>
-                      <h6 style={{ margin: '0 0 5px', color: '#bbb' }}>
-                        Director
-                      </h6>
-                      <span style={{ fontSize: 12 }}>
-                        Ridely Scott
-                      </span>
-                    </Surface>
-                  </Panel>
-                </FlexStackPanel>
-                <Panel height={40}>
-                  <Surface color='white'>
-                    <div
-                      style={{
-                        height: '100%',
-                        display: 'flex',
-                        borderTop: '1px solid #ccc'
-                      }}
-                    >
-                      <Share css={{ borderRight: '1px solid #ccc' }}>
-                        <img height='15' src={share} />
-                      </Share>
-                      <Share css={{ borderRight: '1px solid #ccc' }}>
-                        <img height='15' src={heart} />
-                      </Share>
-                      <Share>
-                        <img height='15' src={bookmark} />
-                      </Share>
-                    </div>
-                  </Surface>
-                </Panel>
-              </FlexStackPanel>
-              <Panel color='#ded6d4' flex={1} />
-              <Panel width={250} color='#726a71' />
-            </FlexStackPanel>
-          </FlexStackPanel>
+          <Panel color='black'>
+            <Panel alignment='center' width={900}>
+              <MainContainer itemSpacing={5}>
+                <SideNav width={260} color='#4f76fb'>
+                  <StackPanel orientation='vertical'>
+                    <Panel height={200}>
+                      <Text fontSize='22px' alignment='center' color='white'>
+                        FREDY
+                      </Text>
+                    </Panel>
+                    <Divider />
+                    <MenuLink text='Home' />
+                    <MenuLink text='About' />
+                    <MenuLink text='Portfolio' />
+                    <MenuLink text='Services' />
+                    <MenuLink text='Blog' />
+                    <MenuLink text='Contact' />
+                    <Divider />
+                    <SearchBar />
+                  </StackPanel>
+                </SideNav>
+                <Content color='#eef1f8' />
+              </MainContainer>
+            </Panel>
+          </Panel>
         </Context>
       )
     }

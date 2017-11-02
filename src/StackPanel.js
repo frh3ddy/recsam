@@ -11,7 +11,7 @@ const DIRECTION = {
 export default class StackPanel extends React.Component {
   constructor (props, context) {
     super(props)
-    const flex = props.height || props.width ? undefined : 1
+    const flex = getFlex(props)
     const method = getMethod(context.parent)
 
     const orientation = props.orientation || 'horizontal'
@@ -47,7 +47,8 @@ StackPanel.childContextTypes = {
 }
 
 StackPanel.contextTypes = {
-  parent: PropTypes.object
+  parent: PropTypes.object,
+  view: PropTypes.object
 }
 
 function getMethod (parent) {
@@ -59,4 +60,8 @@ function getMethod (parent) {
     default:
       return 'add'
   }
+}
+
+function getFlex ({ height, width, minHeight, minWidth }) {
+  return isNaN(width || minHeight || minWidth || height) ? 1 : undefined
 }

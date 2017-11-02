@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 export default class OnClick extends React.Component {
   constructor (props, context) {
     super(props)
-    context.view.setClickHandler(props.signal)
+    context.view.setEventHandler(props.event, props.signal)
   }
 
   getChildContext () {

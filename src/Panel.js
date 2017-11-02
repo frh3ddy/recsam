@@ -1,8 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import ViewNode from './ViewNode'
-import deepEqual from 'deep-equal'
-const Transitionable = require('samsarajs').Core.Transitionable
+// import deepEqual from 'deep-equal'
 const SequentialLayout = require('samsarajs').Layouts.SequentialLayout
 const FlexibleLayout = require('samsarajs').Layouts.FlexibleLayout
 
@@ -10,20 +9,23 @@ export default class Panel extends React.Component {
   constructor (props, context) {
     super(props)
     const method = getMethod(context.parent)
-
+    const flex = getFlex(props)
     const view = new ViewNode({
+      _opacity: props.opcaity === undefined ? 1 : props.opcaity,
       minHeight: props.minHeight,
       margin: props.margin,
       color: props.color,
       width: props.width,
       height: props.height,
+      border: props.border,
+      cornerRadius: props.cornerRadius,
       alignment: props.alignment,
       translation: [props.x, props.y, props.z]
     })
     this.view = view
     this.node = view.node
 
-    context.parent[method](view, props.flex)
+    context.parent[method](view, flex)
     // setTimeout(() => context.parent[method](view), 0)
   }
 
@@ -32,16 +34,16 @@ export default class Panel extends React.Component {
   }
 
   componentDidUpdate (prevProps) {
-    const props = { ...this.props }
-    const oldProps = { ...prevProps }
-    if (!props.children || !props.children.length) {
-      delete props.children
-    }
-    if (!oldProps.children || !oldProps.children.length) {
-      delete oldProps.children
-    }
+    // const props = { ...this.props }
+    // const oldProps = { ...prevProps }
+    // if (!props.children || !props.children.length) {
+    //   delete props.children
+    // }
+    // if (!oldProps.children || !oldProps.children.length) {
+    //   delete oldProps.children
+    // }
 
-    if (deepEqual(oldProps, props)) return
+    // if (deepEqual(oldProps, props)) return
     // console.log(this.node._cachedSpec.size[0] * 50 / 100);
     this.view.setTranslation([this.props.x, this.props.y, this.props.z])
     this.view.setSize([this.props.width, this.props.height])
@@ -51,7 +53,7 @@ export default class Panel extends React.Component {
     if (getMethod(this.context.parent) === 'push') {
       this.context.parent.unlink(this.view)
     }
-    setTimeout(() => this.view.remove(), 0)
+    setTimeout(() => this.view.remove(), 66)
   }
 
   render () {
@@ -69,16 +71,7 @@ Panel.contextTypes = {
 }
 
 function getFlex ({ height, width, minHeight, minWidth }) {
-  switch (true) {
-    case width && minHeight:
-      return 1
-    case height && minWidth:
-      return 1
-    case width || height:
-      return undefined
-    default:
-      return 1
-  }
+  return isNaN(width || minHeight || minWidth || height) ? 1 : undefined
 }
 
 function getMethod (parent) {
