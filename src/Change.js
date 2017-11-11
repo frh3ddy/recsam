@@ -13,23 +13,24 @@ export default class Change extends React.Component {
   }
 
   componentDidUpdate (prevProps) {
-    // const duration = this.props.duration || 500
-    // if (this.props.easing) {
-    //   this.transition = getTransition(this.props)
-    // } else {
-    //   this.transition = { duration }
-    // }
-    // this.props.position.set(
-    //   [this.props.x, this.props.y, this.props.z],
-    //   this.transition
-    // )
+    const { updateMethod, payload } = getMethod(this.props)
+    if (updateMethod === 'noop') return
+    this.context.view[updateMethod](
+      payload,
+      this.transition,
+      this.props.callback
+    )
   }
 
   componentDidMount () {
     // const { opacity, rotation, translation } = this.props
     const { updateMethod, payload } = getMethod(this.props)
     if (updateMethod === 'noop') return
-    this.context.view[updateMethod](payload, this.transition)
+    this.context.view[updateMethod](
+      payload,
+      this.transition,
+      this.props.callback
+    )
 
     // if (rotation) {
     //   this.context.view.updateOpacity(this.props.opacity)
@@ -57,13 +58,13 @@ export default class Change extends React.Component {
       }
       transition = getTransition(props)
     } else {
-      transition = { duration }
+      transition = getTransition(props)
     }
 
     const defaults = {
       updateOpacity: this.context.view.cachedOpacity || 0,
       updateRotation: [0, 0, 0, 0],
-      updateTranslation: [0, 0, 0]
+      updateTranslation: this.context.view.cachedTranslation || [0, 0, 0]
     }
     this.context.view[updateMethod](defaults[updateMethod], transition)
   }

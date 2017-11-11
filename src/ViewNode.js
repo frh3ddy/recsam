@@ -2,6 +2,7 @@ const View = require('samsarajs').Core.View
 const Transform = require('samsarajs').Core.Transform
 const Surface = require('samsarajs').DOM.Surface
 const Transitionable = require('samsarajs').Core.Transitionable
+const Stream = require('samsarajs').Streams.Stream
 
 export default View.extend({
   defaults: {
@@ -21,21 +22,56 @@ export default View.extend({
     minHeight,
     margin,
     cornerRadius,
+    zIndex,
     border
   }) {
     let ancestor
-    this.setTranslation(translation)
+    this.cachedTranslation = translation
+    const [x = 0, y = 0, z = 0] = translation
+    this.translation = new Transitionable([x, y, z])
+    const translateTransform = this.translation.map(vector =>
+      Transform.compose(Transform.translate(vector), Transform.inFront)
+    )
+
+    this.rotation = new Transitionable([0, 0, 0])
+    const rotateTransform = this.rotation.map(vector => {
+      return Transform.composeMany(
+        Transform.rotateX(vector[0]),
+        Transform.rotateY(vector[1]),
+        Transform.rotateZ(vector[2])
+      )
+    })
+
+    const transform = Stream.lift((t, r) => Transform.compose(t, r), [
+      translateTransform,
+      rotateTransform
+    ])
+
+    // this._layoutNode.set({ transform })
+
     const { origin, align } = getAlignment(alignment)
     this.origin = new Transitionable(origin)
     this.align = new Transitionable(align)
     this.zise = new Transitionable([width, height])
     this.opacity = new Transitionable(_opacity)
 
-    ancestor = this.add({
-      opacity: this.opacity,
+    const trans = this.add({
+      transform,
       size: this.zise,
       align: this.align,
       origin: this.origin
+    })
+
+    const reset = trans.add({
+      origin: [0, 0],
+      align: [0, 0]
+    })
+
+    ancestor = reset.add({
+      opacity: this.opacity
+
+      // align: this.align,
+      // origin: this.origin
     })
 
     this.ancestor = ancestor
@@ -46,6 +82,7 @@ export default View.extend({
       this.background = new Surface({
         size: [undefined, undefined],
         properties: {
+          'z-index': zIndex,
           background: color,
           'border-radius': cornerRadius,
           border
@@ -96,6 +133,10 @@ export default View.extend({
       return size
     })
   },
+  updateTranslation (vector, transition, callback) {
+    const [x = 0, y = 0, z = 0] = vector
+    this.translation.set([x, y, z], transition, callback)
+  },
   setTranslation (vector) {
     const [x = 0, y = 0, z = 0] = vector
     this._layoutNode.set({ transform: Transform.translate([x, y, z]) })
@@ -112,6 +153,23 @@ export default View.extend({
       setTimeout(() => this.ancestor.add(this.bounds), 0)
       this.bounds.on(event, handler)
     }
+  },
+  updateRotation (rotation, transition, cb) {
+    let callback = cb
+    let [degrees, x = 0, y = 0, z = 0] = rotation
+    if (degrees) {
+      z = degrees
+    }
+
+    if (cb === true) {
+      callback = undefined
+    }
+
+    this.rotation.set(
+      [x * (Math.PI / 180), y * (Math.PI / 180), z * (Math.PI / 180)],
+      transition,
+      callback
+    )
   },
   setAlignment (alignment) {
     // this.align.set([0.0, 0.0])

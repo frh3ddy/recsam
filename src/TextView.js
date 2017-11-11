@@ -84,34 +84,11 @@ export default View.extend({
     const [x = 0, y = 0, z = 0] = vector
     this.translation.set([x, y, z], transition)
   },
-  addRotation (rotation) {
-    // let [degrees, x = 0, y = 0, z = 0] = rotation
-    // if (degrees) {
-    //   z = degrees
-    // }
-    this.rotation = new Transitionable([0, 0, 0])
-    const transform = this.rotation.map(vector => {
-      return Transform.thenMove(
-        Transform.composeMany(
-          Transform.rotateX(vector[0]),
-          Transform.rotateY(vector[1]),
-          Transform.rotateZ(vector[2]),
-          Transform.inFront
-        ),
-        [0, 0, 60]
-      )
-    })
-    this._layoutNode.set({ transform })
-  },
   updateRotation (rotation, transition) {
     let [degrees, x = 0, y = 0, z = 0] = rotation
     if (degrees) {
       z = degrees
     }
-
-    // if (!this.rotation) {
-    //   this.addRotation(rotation)
-    // }
 
     this.rotation.set(
       [x * (Math.PI / 180), y * (Math.PI / 180), z * (Math.PI / 180)],

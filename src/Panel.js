@@ -16,6 +16,7 @@ export default class Panel extends React.Component {
       margin: props.margin,
       color: props.color,
       width: props.width,
+      zIndex: props.zIndex ? props.zIndex() : undefined,
       height: props.height,
       border: props.border,
       cornerRadius: props.cornerRadius,
@@ -34,6 +35,11 @@ export default class Panel extends React.Component {
   }
 
   componentDidUpdate (prevProps) {
+    if (prevProps.zIndex !== this.props.zIndex) {
+      this.view.background.setProperties({
+        'z-index': this.props.zIndex() ? 1 : 0
+      })
+    }
     // const props = { ...this.props }
     // const oldProps = { ...prevProps }
     // if (!props.children || !props.children.length) {
@@ -42,11 +48,10 @@ export default class Panel extends React.Component {
     // if (!oldProps.children || !oldProps.children.length) {
     //   delete oldProps.children
     // }
-
     // if (deepEqual(oldProps, props)) return
     // console.log(this.node._cachedSpec.size[0] * 50 / 100);
-    this.view.setTranslation([this.props.x, this.props.y, this.props.z])
-    this.view.setSize([this.props.width, this.props.height])
+    // this.view.setTranslation([this.props.x, this.props.y, this.props.z])
+    // this.view.setSize([this.props.width, this.props.height])
   }
 
   componentWillUnmount () {

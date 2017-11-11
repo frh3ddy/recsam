@@ -6,7 +6,8 @@ export default class SamsaraContext extends React.Component {
   constructor (props) {
     super(props)
     this.sContext = new Context()
-    // this.sContext.setPerspective(1000)
+    this.sContext.setPerspective(1000)
+    this.sContext.setPerspectiveOrigin(20)
   }
 
   getChildContext () {

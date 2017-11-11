@@ -13,6 +13,8 @@ import Move from './Move'
 import Change from './Change'
 import Set from './Set'
 
+import Cube from './Cube'
+
 import arrowRight from './images/arrow-right.svg'
 import search from './images/search.svg'
 
@@ -32,32 +34,31 @@ const t = {
 const MenuLink = connect(
   {
     navLink: state`navLinks.${props`text`}`,
-    navLinkClicked: signal`navLinkClicked`
+    pageChanged: signal`pageChanged`
   },
   class MenuLink extends Component {
     state = {
-      hovered: false,
-      color: 'white'
+      hovered: false
     }
 
-    clicked () {
-      this.setState({ active: true })
-    }
+    // clicked () {
+    //   this.setState({ active: true })
+    // }
 
     mouseleave () {
-      this.setState({ hovered: false, color: 'white' })
+      this.setState({ hovered: false })
     }
 
     mouseenter () {
-      this.setState({ hovered: true, color: 'yellow' })
+      this.setState({ hovered: true })
     }
 
     render () {
       const { hovered } = this.state
-      const { text, navLink, navLinkClicked } = this.props
+      const { text, navLink, pageChanged } = this.props
       return (
         <Panel margin='25 0 25' height={35}>
-          <On event='click' signal={() => navLinkClicked({ link: text })} />
+          <On event='click' signal={() => pageChanged({ link: text })} />
           <On event='mouseleave' signal={this.mouseleave.bind(this)} />
           <On event='mouseenter' signal={this.mouseenter.bind(this)} />
           <StackPanel itemSpacing={10}>
@@ -119,7 +120,7 @@ export default connect(
     render () {
       return (
         <Context>
-          <Panel color='black'>
+          <Panel>
             <Panel alignment='center' width={900}>
               <MainContainer itemSpacing={5}>
                 <SideNav width={260} color='#4f76fb'>
@@ -140,7 +141,28 @@ export default connect(
                     <SearchBar />
                   </StackPanel>
                 </SideNav>
-                <Content color='#eef1f8' />
+                <Content>
+                  <Cube size={640}>
+                    <Panel color='lightBlue'>
+                      <Text alignment='center'>Home</Text>
+                    </Panel>
+                    <Panel color='#67d5b5'>
+                      <Text alignment='center'>About</Text>
+                    </Panel>
+                    <Panel color='#f9d423'>
+                      <Text alignment='center'>Portfolio</Text>
+                    </Panel>
+                    <Panel color='#353866'>
+                      <Text alignment='center' color='white'>Services</Text>
+                    </Panel>
+                    <Panel color='#f1404b'>
+                      <Text alignment='center' color='white'>Contact</Text>
+                    </Panel>
+                    <Panel color='#0080ff'>
+                      <Text alignment='center' color='white'>Blog</Text>
+                    </Panel>
+                  </Cube>
+                </Content>
               </MainContainer>
             </Panel>
           </Panel>

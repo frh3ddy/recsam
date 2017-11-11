@@ -1,4 +1,5 @@
 import { Controller } from 'cerebral'
+import { wait } from 'cerebral/operators'
 
 function changeTitle ({ state }) {
   state.set('size', { width: 200, height: 150 })
@@ -12,7 +13,16 @@ function addItem ({ state }) {
   state.push('items', { text: 'new panel', color: 'red' })
 }
 
+function endTransition ({ state }) {
+  state.set('transitioning', false)
+}
+
+function startTransition ({ state }) {
+  state.set('transitioning', true)
+}
+
 function changeActive ({ state, props }) {
+  state.set('activeCube', props.link)
   const links = state.get('navLinks')
   Object.keys(links).forEach(link => {
     if (link === props.link) {
@@ -27,8 +37,10 @@ function changeActive ({ state, props }) {
 
 export default Controller({
   state: {
+    activeCube: 'Home',
+    transitioning: false,
     navLinks: {
-      Home: { active: false },
+      Home: { active: true },
       Portfolio: { active: false },
       About: { active: false },
       Services: { active: false },
@@ -46,6 +58,8 @@ export default Controller({
     titleChanged: changeTitle,
     removedItem: removeItem,
     itemAdded: addItem,
-    navLinkClicked: changeActive
+    navLinkClicked: changeActive,
+    transitionEnded: endTransition,
+    pageChanged: [startTransition, changeActive]
   }
 })
