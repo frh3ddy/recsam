@@ -31,18 +31,6 @@ export default class Change extends React.Component {
       this.transition,
       this.props.callback
     )
-
-    // if (rotation) {
-    //   this.context.view.updateOpacity(this.props.opacity)
-    //   return
-    // }
-
-    // if (opacity) {
-    //   this.context.view.updateOpacity(this.props.opacity)
-    //   return
-    // }
-    // this.context.view.updateOpacity(this.props.opacity)
-    // this.props.position.set([this.x, this.y, this.z], this.transition)
   }
 
   componentWillUnmount () {
@@ -131,33 +119,3 @@ function getTransition (props) {
       return { curve: easing, duration }
   }
 }
-
-// export default class OnClick extends React.Component {
-//   constructor (props, context) {
-//     super(props)
-//     context.view.setEventHandler(props.event, props.signal)
-//   }
-
-//   getChildContext () {
-//     return { parent: this.node }
-//   }
-
-//   componentDidUpdate (prevProps) {}
-
-//   componentDidMount () {}
-
-//   componentWillUnmount () {}
-
-//   render () {
-//     return null
-//   }
-// }
-
-// OnClick.childContextTypes = {
-//   parent: PropTypes.object
-// }
-
-// OnClick.contextTypes = {
-//   parent: PropTypes.object,
-//   view: PropTypes.object
-// }

@@ -3,6 +3,7 @@ const Transform = require('samsarajs').Core.Transform
 const Surface = require('samsarajs').DOM.Surface
 const Transitionable = require('samsarajs').Core.Transitionable
 const Stream = require('samsarajs').Streams.Stream
+const GenericInput = require('samsarajs').Inputs.GenericInput
 
 export default View.extend({
   defaults: {
@@ -10,21 +11,26 @@ export default View.extend({
     margin: undefined,
     minHeight: undefined,
     alignment: 'default',
-    translation: [undefined, undefined, undefined]
+    translation: [undefined, undefined, undefined],
+    needsOutput: false,
   },
-  initialize ({
-    _opacity,
-    color,
-    width,
-    height,
-    alignment,
-    translation,
-    minHeight,
-    margin,
-    cornerRadius,
-    zIndex,
-    border
-  }) {
+  initialize (options) {
+    const {
+      _opacity,
+      color,
+      width,
+      height,
+      alignment,
+      translation,
+      minHeight,
+      margin,
+      cornerRadius,
+      zIndex,
+      border,
+      subs,
+      needsOutput,
+    } = options
+
     let ancestor
     this.cachedTranslation = translation
     const [x = 0, y = 0, z = 0] = translation
@@ -74,9 +80,26 @@ export default View.extend({
       // origin: this.origin
     })
 
+
     this.ancestor = ancestor
 
     const marginsNode = createMarginNode(margin, ancestor)
+
+    if(subs) {
+      subs.size.on('update', size => {
+        if(!size) return
+
+        this.zise.set([size[1] - 50, size[1] - 50])
+      })
+      // const ff = new Transitionable()
+
+      // ff.subscribe(subs)
+      // ff.on('update', g => {
+      //   // console.log(g)
+      //   this.rotation.set(
+      //   [g.cumulate[0] * (Math.PI / 180),  g.cumulate[1]* (Math.PI / 180), 0 * (Math.PI / 180)])
+      // })
+    }
 
     if (color || border) {
       this.background = new Surface({
@@ -89,51 +112,26 @@ export default View.extend({
         }
       })
       marginsNode.add(this.background)
+
+      if(needsOutput) {
+        var gestureInput = new GenericInput(
+                ['mouse', 'touch']
+            );
+        gestureInput.subscribe(this.background);
+        this.output.subscribe(gestureInput)
+      }
     }
 
+    //Total Size of the node including margins
     this.node = marginsNode
 
-    this.size = ancestor.size.map(size => {
-      if (!size) return false
-      let marginsArray = []
-      let topAndBottomMargin = 0
-      let leftAndRightMargin = 0
-      if (margin) {
-        marginsArray = parseStringMargin(margin)
-
-        if (marginsArray.length === 1) {
-          topAndBottomMargin = marginsArray[0] * 2
-          leftAndRightMargin = marginsArray[0] * 2
-        }
-        if (marginsArray.length === 2) {
-          topAndBottomMargin = marginsArray[1] * 2
-          leftAndRightMargin = marginsArray[0] * 2
-        }
-        if (marginsArray.length === 3) {
-          topAndBottomMargin = marginsArray[1] * 2
-          leftAndRightMargin = marginsArray[0] + marginsArray[2]
-          // console.log(marginsArray, leftAndRightMargin)
-        }
-        if (marginsArray.length === 4) {
-          topAndBottomMargin = marginsArray[1] + marginsArray[3]
-          leftAndRightMargin = marginsArray[0] + marginsArray[2]
-        }
-      }
-      if (minHeight && size[1] < minHeight) {
-        size[1] = minHeight
-      }
-
-      if (width) {
-        size[0] = size[0] + leftAndRightMargin
-      }
-      if (height) {
-        size[1] = size[1] + topAndBottomMargin
-      }
-
-      return size
-    })
+    //Size of the node without the margings
+    this.size = getNodeSize(ancestor, options)
   },
   updateTranslation (vector, transition, callback) {
+    if(callback) {
+      console.log(vector, transition, callback)
+    }
     const [x = 0, y = 0, z = 0] = vector
     this.translation.set([x, y, z], transition, callback)
   },
@@ -157,6 +155,7 @@ export default View.extend({
   updateRotation (rotation, transition, cb) {
     let callback = cb
     let [degrees, x = 0, y = 0, z = 0] = rotation
+    
     if (degrees) {
       z = degrees
     }
@@ -174,6 +173,9 @@ export default View.extend({
   setAlignment (alignment) {
     // this.align.set([0.0, 0.0])
     // this.origin.set([0.0, 0.0])
+  },
+  updateSize(size) {
+    this.zise.set(size)
   }
 })
 
@@ -196,6 +198,56 @@ function getAlignment (align) {
     default:
       return { align: [0, 0], origin: [0, 0] }
   }
+}
+
+function getNodeSize(node, options) {
+  const {width, height, minHeight, margin} = options
+
+  return node.size.map(size => {
+      if (!size) return false
+
+      let marginsArray = []
+      let topAndBottomMargin = 0
+      let leftAndRightMargin = 0
+
+      if (margin) {
+        marginsArray = parseStringMargin(margin)
+
+        if (marginsArray.length === 1) {
+          topAndBottomMargin = marginsArray[0] * 2
+          leftAndRightMargin = marginsArray[0] * 2
+        }
+
+        if (marginsArray.length === 2) {
+          topAndBottomMargin = marginsArray[1] * 2
+          leftAndRightMargin = marginsArray[0] * 2
+        }
+
+        if (marginsArray.length === 3) {
+          topAndBottomMargin = marginsArray[1] * 2
+          leftAndRightMargin = marginsArray[0] + marginsArray[2]
+          // console.log(marginsArray, leftAndRightMargin)
+        }
+
+        if (marginsArray.length === 4) {
+          topAndBottomMargin = marginsArray[1] + marginsArray[3]
+          leftAndRightMargin = marginsArray[0] + marginsArray[2]
+        }
+      }
+
+      if (minHeight && size[1] < minHeight) {
+        size[1] = minHeight
+      }
+
+      if (width) {
+        size[0] = size[0] + leftAndRightMargin
+      }
+      if (height) {
+        size[1] = size[1] + topAndBottomMargin
+      }
+
+      return size
+    })
 }
 
 function parseStringMargin (string) {

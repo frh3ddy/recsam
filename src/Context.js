@@ -8,10 +8,18 @@ export default class SamsaraContext extends React.Component {
     this.sContext = new Context()
     this.sContext.setPerspective(1000)
     this.sContext.setPerspectiveOrigin(20)
+
+    // if(props.nodeName) {
+    //   this.nodeName = props.nodeName
+    // }
   }
 
-  getChildContext () {
-    return { parent: this.sContext }
+  getChildContext (test) {
+    const namesNodes = this.props.nodeName ? [{name: this.props.nodeName, view: this.sContext}] : []
+
+    console.log(namesNodes)
+
+    return { parent: this.sContext, namesNodes }
   }
 
   componentDidMount () {
@@ -28,5 +36,6 @@ export default class SamsaraContext extends React.Component {
 }
 
 SamsaraContext.childContextTypes = {
-  parent: PropTypes.object
+  parent: PropTypes.object,
+  namesNodes: PropTypes.array
 }

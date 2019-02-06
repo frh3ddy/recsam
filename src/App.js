@@ -105,7 +105,7 @@ const SearchBar = () => (
 )
 
 const Divider = () => (
-  <Panel opcaity={0.5} margin='0 20' height={0.5} color='white' />
+  <Panel opacity={0.5} margin='0 20' height={0.5} color='white' />
 )
 
 export default connect(
@@ -119,11 +119,10 @@ export default connect(
   class App extends Component {
     render () {
       return (
-        <Context>
-          <Panel>
-            <Panel alignment='center' width={900}>
-              <MainContainer itemSpacing={5}>
-                <SideNav width={260} color='#4f76fb'>
+        <Context nodeName="Context">
+          
+            <Panel alignment='center' >
+                <SideNav width={260} color='#4f76fb' nodeName='SideNav'>
                   <StackPanel orientation='vertical'>
                     <Panel height={200}>
                       <Text fontSize='22px' alignment='center' color='white'>
@@ -141,31 +140,31 @@ export default connect(
                     <SearchBar />
                   </StackPanel>
                 </SideNav>
-                <Content>
-                  <Cube size={640}>
-                    <Panel color='lightBlue'>
+                <Content >
+                  <Cube subscribeTo='Context'>
+                    <Panel color='lightBlue' opacity={.7}>
                       <Text alignment='center'>Home</Text>
                     </Panel>
-                    <Panel color='#67d5b5'>
+                    <Panel color='#67d5b5' opacity={.7}>
                       <Text alignment='center'>About</Text>
                     </Panel>
-                    <Panel color='#f9d423'>
+                    <Panel color='#f9d423' opacity={.7}>
                       <Text alignment='center'>Portfolio</Text>
                     </Panel>
-                    <Panel color='#353866'>
+                    <Panel color='#353866' opacity={.7}>
                       <Text alignment='center' color='white'>Services</Text>
                     </Panel>
-                    <Panel color='#f1404b'>
+                    <Panel color='#f1404b' opacity={.7}>
                       <Text alignment='center' color='white'>Contact</Text>
                     </Panel>
-                    <Panel color='#0080ff'>
+                    <Panel color='#0080ff' opacity={.7}>
                       <Text alignment='center' color='white'>Blog</Text>
                     </Panel>
                   </Cube>
                 </Content>
-              </MainContainer>
+              
             </Panel>
-          </Panel>
+
         </Context>
       )
     }

@@ -14,52 +14,80 @@ export default connect(
     transitioning: state`transitioning`,
     transitionEnded: signal`transitionEnded`
   },
-  ({ active, size, children, transitioning, transitionEnded }) => {
-    const [
-      front = null,
-      left = null,
-      right = null,
-      back = null,
-      top = null,
-      bottom = null
-    ] = React.Children.toArray(children)
-    let degrees = getTransform(active)
-    return (
-      <Panel alignment='center' z={-(size / 2)} height={size} width={size}>
-        <Change
-          easing='easeInOutCubic'
-          duration={800}
-          {...degrees}
-          callback={() => transitionEnded()}
-        />
-        <WhileTrue value={transitioning}>
-          <Change easing='easeInOutCubic' z={-size * 2} duration={350} />
-        </WhileTrue>
-        <Panel x={size} z={-(size / 2)}>
-          {back}
-          <Set degreesY={-180} duration={1} />
+  class Cube extends React.Component{
+
+    constructor() {
+      super()
+      this.w = window.innerWidth
+      this.h = window.innerHeight
+
+      const cubeSize =  this.w > this.h ? this.h : this.w
+
+      this.state = {
+        size: cubeSize
+      }
+    }
+
+    // updateState(size) {
+    //   this.setState({size: 300})
+    // }
+
+    componentDidMount() {
+      // setTimeout(() => {
+      //   this.setState({size: 300})
+      // }, 3000)
+    }
+
+    render() {
+      const [
+        front = null,
+        left = null,
+        right = null,
+        back = null,
+        top = null,
+        bottom = null
+      ] = React.Children.toArray(this.props.children)
+
+      let degrees = getTransform(this.props.active)
+
+      return (
+        <Panel subscribeTo={this.props.subscribeTo}  alignment='center' z={-(this.state.size / 2)} height={this.state.size} width={this.state.size}>
+          <Change
+            easing='easeInOutCubic'
+            duration={800}
+            {...degrees}
+            callback={() => this.props.transitionEnded()}
+          />
+          <WhileTrue value={this.props.transitioning}>
+            <Change easing='easeInOutCubic' z={-this.state.size * 2} duration={350} />
+          </WhileTrue>
+
+          <Panel x={this.state.size} z={-(this.state.size / 2)}>
+            {back}
+            <Set degreesY={-180} duration={1} />
+          </Panel>
+          <Panel z={-(this.state.size / 2)}>
+            {top}
+            <Set degreesX={90} duration={1} />
+          </Panel>
+          <Panel z={this.state.size / 2} y={this.state.size}>
+            {bottom}
+            <Set degreesX={270} duration={1} />
+          </Panel>
+          <Panel z={this.state.size / 2} x={this.state.size}>
+            {right}
+            <Set degreesX={360} degreesY={90} duration={1} />
+          </Panel>
+          <Panel z={this.state.size / 2}>
+            {front}
+          </Panel>
+          <Panel z={-(this.state.size / 2)}>
+            {left}
+            <Set degreesX={360} degreesY={270} duration={1} />
+          </Panel>
         </Panel>
-        <Panel z={-(size / 2)}>
-          {top}
-          <Set degreesX={90} duration={1} />
-        </Panel>
-        <Panel z={size / 2} y={size}>
-          {bottom}
-          <Set degreesX={90} degreesX={270} duration={1} />
-        </Panel>
-        <Panel z={size / 2} x={size}>
-          {right}
-          <Set degreesX={360} degreesY={90} duration={1} />
-        </Panel>
-        <Panel z={size / 2}>
-          {front}
-        </Panel>
-        <Panel z={-(size / 2)}>
-          {left}
-          <Set degreesX={360} degreesY={270} duration={1} />
-        </Panel>
-      </Panel>
-    )
+      )
+    }
   }
 )
 

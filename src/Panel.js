@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import ViewNode from './ViewNode'
-// import deepEqual from 'deep-equal'
 const SequentialLayout = require('samsarajs').Layouts.SequentialLayout
 const FlexibleLayout = require('samsarajs').Layouts.FlexibleLayout
 
@@ -10,8 +9,8 @@ export default class Panel extends React.Component {
     super(props)
     const method = getMethod(context.parent)
     const flex = getFlex(props)
-    const view = new ViewNode({
-      _opacity: props.opcaity === undefined ? 1 : props.opcaity,
+    const viewOptions = {
+      _opacity: props.opacity === undefined ? 1 : props.opacity,
       minHeight: props.minHeight,
       margin: props.margin,
       color: props.color,
@@ -21,17 +20,39 @@ export default class Panel extends React.Component {
       border: props.border,
       cornerRadius: props.cornerRadius,
       alignment: props.alignment,
-      translation: [props.x, props.y, props.z]
-    })
+      translation: [props.x, props.y, props.z],
+    }
+
+    if(props.subscribeTo && context.namesNodes.length) {
+      context.namesNodes.forEach(node => {
+        if(node.name === props.subscribeTo) {
+          viewOptions.subs = node.view
+        }
+      })
+    }
+
+    if(props.nodeName) {
+      viewOptions.needsOutput = true
+    }
+
+    const view = new ViewNode(viewOptions)
     this.view = view
     this.node = view.node
 
     context.parent[method](view, flex)
+
+    if(props.nodeName) {
+      context.namesNodes.push({
+        name: props.nodeName,
+        view: view
+      })
+    }
+
     // setTimeout(() => context.parent[method](view), 0)
   }
 
   getChildContext () {
-    return { parent: this.node, view: this.view }
+    return { parent: this.node, view: this.view}
   }
 
   componentDidUpdate (prevProps) {
@@ -50,8 +71,36 @@ export default class Panel extends React.Component {
     // }
     // if (deepEqual(oldProps, props)) return
     // console.log(this.node._cachedSpec.size[0] * 50 / 100);
-    // this.view.setTranslation([this.props.x, this.props.y, this.props.z])
-    // this.view.setSize([this.props.width, this.props.height])
+
+    //TODO handle updates better, since it can cause unespected errors
+
+    let needsUpdate = false
+
+    if (this.props.x !== undefined ) {
+      if(this.props.x !== prevProps.x) {
+        needsUpdate = true
+      }
+    }
+
+    if (this.props.y !== undefined ) {
+      if(this.props.y !== prevProps.y) {
+        needsUpdate = true
+      }
+    }
+
+    if (this.props.z !== undefined ) {
+      if(this.props.z !== prevProps.z) {
+        needsUpdate = true
+      }
+    }
+
+    if (needsUpdate) {
+      this.view.updateTranslation([this.props.x, this.props.y, this.props.z])
+    }
+
+    if(this.props.width !== undefined && this.props.height !== undefined) {
+      this.view.updateSize([this.props.width, this.props.height])
+    }
   }
 
   componentWillUnmount () {
@@ -72,7 +121,8 @@ Panel.childContextTypes = {
 }
 
 Panel.contextTypes = {
-  parent: PropTypes.object
+  parent: PropTypes.object,
+  namesNodes: PropTypes.array
 }
 
 function getFlex ({ height, width, minHeight, minWidth }) {
@@ -89,6 +139,8 @@ function getMethod (parent) {
       return 'add'
   }
 }
+
+
 
 // import React from "react";
 // const Transitionable = require("samsarajs").Core.Transitionable;
