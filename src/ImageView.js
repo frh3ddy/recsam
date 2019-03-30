@@ -54,7 +54,7 @@ export default View.extend({
       opacity: this.opacity,
       tagName: 'img',
       properties: {
-        background: color,
+        color: color,
         padding,
         'text-align': contentAlignment
       },

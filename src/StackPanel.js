@@ -16,6 +16,7 @@ export default class StackPanel extends React.Component {
 
     const orientation = props.orientation || 'horizontal'
     const spacing = props.itemSpacing || 0
+  
     this.node = new SequentialLayout({
       size: [props.width, props.height],
       direction: DIRECTION[orientation],

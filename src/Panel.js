@@ -9,9 +9,24 @@ export default class Panel extends React.Component {
     super(props)
     const method = getMethod(context.parent)
     const flex = getFlex(props)
+
+    let proportions = [1, 1]
+    if(typeof props.width === 'string' || typeof props.height === 'string') {
+      if(props.width) {
+        proportions[0] = parseInt(props.width, 10) /100
+      }
+
+      if(props.height) {
+        proportions[1] = parseInt(props.height, 10) /100
+      }
+    } else {
+      proportions = undefined
+    }
+
     const viewOptions = {
       _opacity: props.opacity === undefined ? 1 : props.opacity,
       minHeight: props.minHeight,
+      _proportions : proportions,
       margin: props.margin,
       color: props.color,
       width: props.width,

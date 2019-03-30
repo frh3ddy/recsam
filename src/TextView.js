@@ -63,6 +63,10 @@ export default View.extend({
       size[1] = height
     }
 
+    this.csize = size
+
+    this.testsize = new Transitionable(size)
+
     this.surface = new Surface({
       properties: {
         color,
@@ -71,7 +75,7 @@ export default View.extend({
         'text-align': textAlignment,
         'font-size': fontSize
       },
-      size: size,
+      size: this.testsize,
       origin: this.origin,
       content
     })
@@ -97,6 +101,9 @@ export default View.extend({
   },
   updateProperties (props) {
     this.surface.setProperties(props)
+  },
+  setContent(content) {
+    this.surface.setContent(content)    
   }
 })
 

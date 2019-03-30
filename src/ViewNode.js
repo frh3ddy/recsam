@@ -28,6 +28,7 @@ export default View.extend({
       zIndex,
       border,
       subs,
+      _proportions,
       needsOutput,
     } = options
 
@@ -61,12 +62,27 @@ export default View.extend({
     this.zise = new Transitionable([width, height])
     this.opacity = new Transitionable(_opacity)
 
-    const trans = this.add({
-      transform,
-      size: this.zise,
-      align: this.align,
-      origin: this.origin
-    })
+    let transProps
+
+    if(_proportions) {
+      this.proportions = new Transitionable(_proportions)
+      transProps = {
+        transform,
+        align: this.align,
+        origin: this.origin,
+        proportions: this.proportions
+      }
+
+    } else {
+      transProps = {
+        transform,
+        align: this.align,
+        origin: this.origin,
+        size: this.zise,
+      }
+    }
+
+    const trans = this.add(transProps)
 
     const reset = trans.add({
       origin: [0, 0],
@@ -143,8 +159,9 @@ export default View.extend({
     this.opacity.set(opacity, { duration: 300 })
   },
   setEventHandler (event, handler) {
-    if (this.bounds) {
-      this.bounds.on(event, handler)
+    if (this.background) {
+      this.background.on(event, handler)
+      this.background.setProperties({ cursor: 'pointer' })
     } else {
       this.bounds = new Surface({ properties: { cursor: 'pointer' } })
       // TODO: decide if hitTest includes margin, if not then add to margin node
@@ -195,10 +212,16 @@ function getAlignment (align) {
       return { align: [1, 0], origin: [1, 0] }
     case 'bottom':
       return { align: [0, 1], origin: [0, 1] }
+    case 'bottomRight':
+      return { align: [1, 1], origin: [1, 1] }
+    case 'bottomCenter':
+      return { align: [.5, 1], origin: [.5, 1] }
     default:
       return { align: [0, 0], origin: [0, 0] }
   }
 }
+
+
 
 function getNodeSize(node, options) {
   const {width, height, minHeight, margin} = options

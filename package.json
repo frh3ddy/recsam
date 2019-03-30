@@ -4,14 +4,24 @@
   "private": true,
   "dependencies": {
     "@cerebral/react": "^2.2.0",
+    "animejs": "^3.0.1",
     "cerebral": "^3.2.0",
+    "chance": "^1.0.18",
+    "countup.js": "^2.0.4",
     "deep-equal": "^1.0.1",
+    "dotenv": "^7.0.0",
     "glamor": "^2.20.40",
     "glamorous": "^4.10.0",
+    "ip": "^1.1.5",
+    "local-ipv4-address": "^0.0.2",
+    "net": "^1.0.2",
     "react": "^16.0.0",
+    "react-countup": "^4.1.2",
     "react-dom": "^16.0.0",
     "react-scripts": "1.0.14",
-    "samsarajs": "^0.2.4"
+    "samsarajs": "^0.2.4",
+    "socket.io-client": "^2.2.0",
+    "socket.io-react": "^1.2.0"
   },
   "scripts": {
     "start": "react-scripts start",
