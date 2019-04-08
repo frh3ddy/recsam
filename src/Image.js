@@ -30,6 +30,9 @@ export default class Image extends React.Component {
 
   componentDidUpdate (prevProps) {
     // this.surface.updateTranslation([this.props.x, this.props.y, this.props.z])
+    if(this.props.opacity !== prevProps.opacity){
+      this.surface.updateOpacity()
+    }
   }
 
   componentWillUnmount () {

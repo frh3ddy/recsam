@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 export default class Move extends React.Component {
-  constructor (props) {
+  constructor (props, context) {
     super(props)
     const duration = props.duration || 500
     if (props.easing) {
@@ -44,7 +44,8 @@ export default class Move extends React.Component {
 }
 
 Move.contextTypes = {
-  view: PropTypes.object
+  view: PropTypes.object,
+  namesNodes: PropTypes.array
 }
 
 function getTransition (props) {
