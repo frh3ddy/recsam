@@ -15,13 +15,25 @@ export default class Set extends React.Component {
   componentDidUpdate (prevProps) {
     const { updateMethod, payload } = getMethod(this.props)
     if (updateMethod === 'noop') return
-    this.context.view[updateMethod](payload, this.transition, true)
+    setTimeout(() => {
+      this.context.view[updateMethod](
+      payload,
+      this.transition,
+      this.props.callback
+    )
+    }, this.delay)
   }
 
   componentDidMount () {
     const { updateMethod, payload } = getMethod(this.props)
     if (updateMethod === 'noop') return
-    this.context.view[updateMethod](payload, this.transition, true)
+    setTimeout(() => {
+      this.context.view[updateMethod](
+      payload,
+      this.transition,
+      this.props.callback
+    )
+    }, this.delay)
   }
 
   componentWillUnmount () {}

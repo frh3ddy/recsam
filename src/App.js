@@ -3,15 +3,15 @@ import './App.css'
 import Context from './Context'
 import createNamedComponent from './createNamedComponent'
 import Text from './Text'
-import Image from './Image'
 import On from './OnClick'
+import Image from './Image'
 import WhileTrue from './WhileTrue'
 import Change from './Change'
 import Set from './Set'
 import { socketConnect } from 'socket.io-react';
 
 import blueteam from './images/blueteam.png'
-import pinkteam from './images/pinkteam.png'
+import pinkteam from './images/teamPink.png'
 import strikeBaby from './images/strikeBaby.png'
 
 const Panel = createNamedComponent()
