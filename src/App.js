@@ -8,6 +8,7 @@ import WhileTrue from './WhileTrue'
 import Change from './Change'
 import Set from './Set'
 import { socketConnect } from 'socket.io-react';
+import Sound from 'react-sound'
 
 //Components
 import Background from './babyShowerComponents/background'
@@ -16,6 +17,10 @@ import Awnsers from './babyShowerComponents/awnsers'
 
 //Data
 import awnsersData from './babyShowerComponents/awnsersData'
+
+//sounds
+import incorrecto from './sounds/Error.wav'
+import reveal from './sounds/reveal_sound_effect.wav'
 
 //Images
 import bear from './images/bear.png'
@@ -44,9 +49,21 @@ class App extends Component {
       teamTwoTotalScore: 0,
       showStrike: false,
       strikes: 0,
+      revealSound: false,
       revealAnswers: false,
       awnsers: awnsersData
     }
+
+    this.stopRevealSound = this.stopRevealSound.bind(this)
+  }
+
+  stopRevealSound() {
+    this.setState((state, _) => {
+      console.log('revealSound')
+      return {
+        revealSound: false
+      }
+    })
   }
 
   hideStrike() {
@@ -80,9 +97,10 @@ class App extends Component {
         state.awnsers[payload.index].text = payload.text
         state.awnsers[payload.index].points = payload.points
 
-        //Game is over, but thres awnser left, just reveal them
+        //Game is over, but theres awnser left, just reveal them
         if(state.revealAnswers) {
           return {
+            revealSound: true,
             awnsers: state.awnsers
           }
         }
@@ -94,11 +112,13 @@ class App extends Component {
             awnsers: state.awnsers,
             [scoreTeamPlaying]: state.score + parseInt(payload.points, 10),
             score: 0,
+            revealSound: true,
             revealAnswers: true
           }
         }
 
         return {
+            revealSound: true,
             awnsers: state.awnsers,
             score: state.score + parseInt(payload.points, 10)
           }
@@ -119,6 +139,7 @@ class App extends Component {
 
         return {
           revealAnswers: true,
+          revealSound: true,
           awnsers: state.awnsers,
           [teamPlaying]: state.score += parseInt(payload.points, 10),
           score: 0
@@ -166,6 +187,8 @@ class App extends Component {
 
   render() {
     return <Context>
+      <Sound url={incorrecto} autoLoad={true} playStatus={this.state.showStrike ? Sound.status.PLAYING : Sound.status.STOPPED}/>
+      <Sound url={reveal} autoLoad={true} playStatus={this.state.revealSound ? Sound.status.PLAYING : Sound.status.STOPPED} onFinishedPlaying={() => this.stopRevealSound()}/>
       <Panel color="black">
         <Panel margin='25' width='10%' height='25%'>
           <Image file={pinkBear}/>
