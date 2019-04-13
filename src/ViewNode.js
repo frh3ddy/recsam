@@ -305,10 +305,6 @@ export default View.extend({
     const [x = 1, y = 1, z = 1] = vectorArr
     this.scale.set([x, y, z], transition)
   },
-  updateScale(vector, transition, callback) {
-    const [x = 0, y = 0, z = 0] = vector
-    this.scale.set([x, y, z], transition)
-  },
   setEventHandler (event, handler) {
     //save the handler function to remove the listener
     this.handler = handler
