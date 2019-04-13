@@ -30,12 +30,12 @@ let answers = [
   },
   {
       text:'Me lo merezco ',
-      points: '14',
+      points: '20',
       done: false
   },
   {
       text:'Por favor',
-      points: '20',
+      points: '14',
       done: false
   },
   {
