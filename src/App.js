@@ -19,7 +19,7 @@ import awnsersData from './babyShowerComponents/awnsersData'
 
 //Images
 import bear from './images/bear.png'
-import pinkBear from './images/pinkBear.png'
+import pinkBear from './images/bearPink.png'
 import strikeBaby from './images/strikeBaby.png'
 import bebita from './images/bebita.png'
 import polosita from './images/polosita.png'
@@ -215,14 +215,14 @@ class App extends Component {
               <Image file={polosita}/>
             </Panel>
             <Panel width={70} height={55} alignment='bottomRight' x={-27} y={25} >
-              <Set degreesZ={60} duration={1} />
+              <Set degreesZ={60}/>
               <Image file={polosita}/>
             </Panel>
             <Panel width={100} height={70} x={-40} y={20} alignment='bottom'>
               <Image file={flores}/>
             </Panel>
             <Panel width={100} height={70} x={40} y={-10} alignment='right'>
-              <Set degreesZ={18} duration={1} />
+              <Set degreesZ={18}/>
               <Image file={flores}/>
             </Panel>
           </Panel>
