@@ -4,7 +4,10 @@ import PropTypes from 'prop-types'
 export default class Change extends React.Component {
   constructor (props) {
     super(props)
-    const duration = props.duration || 500
+    const duration = props.duration || 0
+
+    this.delay = props.delay || 0
+
     if (props.easing) {
       this.transition = getTransition(props)
     } else {
@@ -12,33 +15,53 @@ export default class Change extends React.Component {
     }
   }
 
+  getChildContext () {
+    return {namesNodes: this.context.namesNodes}
+  }
+
+  shouldComponentUpdate(nextProps) {
+    let shouldUpdate = false
+    for(let key in this.props) {
+      if(this.props[key] !== nextProps[key]) {
+        shouldUpdate = true
+        break
+      }
+    }
+
+    return shouldUpdate
+  }
+
   componentDidUpdate (prevProps) {
     const { updateMethod, payload } = getMethod(this.props)
     if (updateMethod === 'noop') return
-    this.context.view[updateMethod](
+    setTimeout(() => {
+      this.context.view[updateMethod](
       payload,
       this.transition,
       this.props.callback
     )
+    }, this.delay)
   }
 
   componentDidMount () {
-    // const { opacity, rotation, translation } = this.props
     const { updateMethod, payload } = getMethod(this.props)
     if (updateMethod === 'noop') return
-    this.context.view[updateMethod](
+    setTimeout(() => {
+      this.context.view[updateMethod](
       payload,
       this.transition,
       this.props.callback
     )
+    }, this.delay)
   }
 
   componentWillUnmount () {
     const props = { ...this.props }
     let transition
+
     const { updateMethod } = getMethod(props)
     if (updateMethod === 'noop') return
-    const duration = props.durationBack || props.duration || 500
+
     if (props.easingBack) {
       props.easing = props.easingBack
       if (props.durationBack) {
@@ -50,10 +73,12 @@ export default class Change extends React.Component {
     }
 
     const defaults = {
-      updateOpacity: this.context.view.cachedOpacity || 0,
+      updateOpacity: this.context.view.cachedOpacity || 1,
       updateRotation: [0, 0, 0, 0],
+      updateScale: [1,1,1, 0, 0],
       updateTranslation: this.context.view.cachedTranslation || [0, 0, 0]
     }
+
     this.context.view[updateMethod](defaults[updateMethod], transition)
   }
 
@@ -62,8 +87,13 @@ export default class Change extends React.Component {
   }
 }
 
+Change.childContextTypes = {
+  namesNodes: PropTypes.array
+}
+
 Change.contextTypes = {
-  view: PropTypes.object
+  view: PropTypes.object,
+  namesNodes: PropTypes.array
 }
 
 function getMethod ({
@@ -74,7 +104,11 @@ function getMethod ({
   degreesX,
   degreesY,
   degreesZ,
-  opacity
+  opacity,
+  scaleX,
+  scaleY,
+  scaleZ,
+  aboutOrigin = [0, 0]
 }) {
   switch (true) {
     case opacity !== undefined:
@@ -89,6 +123,11 @@ function getMethod ({
         updateMethod: 'updateTranslation',
         payload: [x, y, z]
       }
+    case isAtLeastOneDefined([scaleX, scaleY, scaleZ]):
+      return {
+        updateMethod: 'updateScale',
+        payload: [scaleX, scaleY, scaleZ, aboutOrigin[0], aboutOrigin[1]]
+      }
     default:
       return { updateMethod: 'noop' }
   }
@@ -100,7 +139,7 @@ function isAtLeastOneDefined (args) {
 
 function getTransition (props) {
   const {
-    duration = 500,
+    duration = 0,
     easing,
     damping = 0.5,
     velocity = 0,

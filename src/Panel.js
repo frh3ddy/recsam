@@ -36,6 +36,8 @@ export default class Panel extends React.Component {
       cornerRadius: props.cornerRadius,
       alignment: props.alignment,
       translation: [props.x, props.y, props.z],
+      layout: props.layout,
+      nodesss: context.namesNodes
     }
 
     if(props.subscribeTo && context.namesNodes.length) {
@@ -62,12 +64,10 @@ export default class Panel extends React.Component {
         view: view
       })
     }
-
-    // setTimeout(() => context.parent[method](view), 0)
   }
 
   getChildContext () {
-    return { parent: this.node, view: this.view}
+    return { parent: this.node, view: this.view, namesNodes: this.context.namesNodes}
   }
 
   componentDidUpdate (prevProps) {
@@ -116,6 +116,10 @@ export default class Panel extends React.Component {
     if(this.props.width !== undefined && this.props.height !== undefined) {
       this.view.updateSize([this.props.width, this.props.height])
     }
+
+    if(this.props.opacity !== prevProps.opacity) {
+      this.view.updateOpacity(this.props.opacity)
+    }
   }
 
   componentWillUnmount () {
@@ -132,7 +136,8 @@ export default class Panel extends React.Component {
 
 Panel.childContextTypes = {
   parent: PropTypes.object,
-  view: PropTypes.object
+  view: PropTypes.object,
+  namesNodes: PropTypes.array
 }
 
 Panel.contextTypes = {

@@ -13,6 +13,7 @@ export default View.extend({
     alignment: 'default',
     translation: [undefined, undefined, undefined],
     needsOutput: false,
+    nodesss: []
   },
   initialize (options) {
     const {
@@ -30,31 +31,65 @@ export default View.extend({
       subs,
       _proportions,
       needsOutput,
+      nodesss,
+      layout
     } = options
+
+    this.scaleOrigin = [0, 0]
+    this.cachedNodeSize = [0, 0]
+
+    this.transformOrder = []
+    this.transformOrderObject = {}
+
+    this.nodesss = nodesss
+
+    this.cacheTransform = undefined
 
     let ancestor
     this.cachedTranslation = translation
-    const [x = 0, y = 0, z = 0] = translation
-    this.translation = new Transitionable([x, y, z])
-    const translateTransform = this.translation.map(vector =>
-      Transform.compose(Transform.translate(vector), Transform.inFront)
-    )
 
+
+    const [x = 0, y = 0, z = 0] = translation
+
+    // wich transform should be applied first
+    if(x || y || z) {
+      this.transformOrder.push('translate')
+      this.transformOrderObject['translate'] = new Date().getTime()
+    } 
+
+    this.scale = new Transitionable([1, 1, 1])
+    this.translation = new Transitionable([x, y, z])
     this.rotation = new Transitionable([0, 0, 0])
-    const rotateTransform = this.rotation.map(vector => {
-      return Transform.composeMany(
-        Transform.rotateX(vector[0]),
-        Transform.rotateY(vector[1]),
-        Transform.rotateZ(vector[2])
-      )
+   
+    var mergedStream = Stream.merge({
+        translate : this.translation,
+        scale : this.scale,
+        rotate : this.rotation
     })
 
-    const transform = Stream.lift((t, r) => Transform.compose(t, r), [
-      translateTransform,
-      rotateTransform
-    ])
+    var mapMergedStream = mergedStream.map(stream => {
+      let scaleOriginX = 0
+      let scaleOriginY = 0 
+      if(this.scaleOrigin[0] !== 0 ) {
+        scaleOriginX = this.scaleOrigin[0] * this.cachedNodeSize[0]
+      }
 
-    // this._layoutNode.set({ transform })
+      if(this.scaleOrigin[1] !== 0) {
+        scaleOriginY = this.scaleOrigin[1] * this.cachedNodeSize[1]
+      }
+
+      let rotate = Transform.composeMany(
+        Transform.rotateX(stream.rotate[0]),
+        Transform.rotateY(stream.rotate[1]),
+        Transform.rotateZ(stream.rotate[2]),
+        )
+
+      let scale = Transform.scale(stream.scale)
+      
+      let scatrans = Transform.thenMove(Transform.aboutOrigin([scaleOriginX, scaleOriginY], scale), stream.translate)
+
+      return Transform.compose(scatrans ,rotate,)
+    }) 
 
     const { origin, align } = getAlignment(alignment)
     this.origin = new Transitionable(origin)
@@ -67,7 +102,7 @@ export default View.extend({
     if(_proportions) {
       this.proportions = new Transitionable(_proportions)
       transProps = {
-        transform,
+        transform: mapMergedStream,
         align: this.align,
         origin: this.origin,
         proportions: this.proportions
@@ -75,7 +110,7 @@ export default View.extend({
 
     } else {
       transProps = {
-        transform,
+        transform: mapMergedStream,
         align: this.align,
         origin: this.origin,
         size: this.zise,
@@ -91,15 +126,23 @@ export default View.extend({
 
     ancestor = reset.add({
       opacity: this.opacity
-
-      // align: this.align,
-      // origin: this.origin
     })
-
 
     this.ancestor = ancestor
 
     const marginsNode = createMarginNode(margin, ancestor)
+
+    this.subscribedNode = undefined
+    if(layout) {
+      this.size.on('end', () => {
+        if(this.subscribedNode) return
+          nodesss.forEach(node => {
+            if(node.name === layout) {
+              this.subscribedNode = node.view
+            }
+          })
+      })
+    }
 
     if(subs) {
       subs.size.on('update', size => {
@@ -107,6 +150,7 @@ export default View.extend({
 
         this.zise.set([size[1] - 50, size[1] - 50])
       })
+
       // const ff = new Transitionable()
 
       // ff.subscribe(subs)
@@ -141,22 +185,125 @@ export default View.extend({
     //Total Size of the node including margins
     this.node = marginsNode
 
+    this.node.layout.on('end', ({transform}) => this.cacheTransform = transform)
+
     //Size of the node without the margings
     this.size = getNodeSize(ancestor, options)
+
+    this.size.on('end', (size) => {
+      if(!size) return
+      this.cachedNodeSize[0] = size[0]
+      this.cachedNodeSize[1] = size[1]
+    })
   },
   updateTranslation (vector, transition, callback) {
-    if(callback) {
-      console.log(vector, transition, callback)
+    if(!this.transformOrder.includes('translate')) {
+      this.transformOrder.push('translate')
+      this.transformOrderObject['translate'] = new Date().getTime()
     }
-    const [x = 0, y = 0, z = 0] = vector
+
+    const [x = 0, y = 0, z = 0] = parseVector(vector).map(point => {
+      if(!Array.isArray(point) && typeof point === 'object') {
+        if(this.nodesss.length > 0) {
+          let value = undefined
+          this.nodesss.forEach(node => {
+            if(node.name === point.node) {
+              if(point.prop === 'x') {
+                value = (node.view.cacheTransform[12] - this.cacheTransform[12]) + 1
+              }
+
+              if(point.prop === 'y') {
+                value = (node.view.cacheTransform[13] - this.cacheTransform[13]) - 3
+              }
+
+              if(point.prop === 'z') {
+                value = node.view.cacheTransform[14]
+              }
+            }
+          })
+
+          return value
+        }
+      }
+
+      return point
+    })
+    
     this.translation.set([x, y, z], transition, callback)
   },
-  setTranslation (vector) {
-    const [x = 0, y = 0, z = 0] = vector
-    this._layoutNode.set({ transform: Transform.translate([x, y, z]) })
+  // setTranslation (vector) {
+  //   const [x = 0, y = 0, z = 0] = vector
+  //   this._layoutNode.set({ transform: Transform.translate([x, y, z]) })
+  // },
+  updateOpacity (opacity, transition, callback) {
+    if(!transition) {
+      transition = {duration: 0}
+      console.log(transition)
+    }
+    this.opacity.set(opacity, transition, callback)
   },
-  updateOpacity (opacity) {
-    this.opacity.set(opacity, { duration: 300 })
+  updateScale(vector, transition, callback) {
+    if(!this.transformOrder.includes('scale')) {
+      this.transformOrder.push('scale')
+      this.transformOrderObject['scale'] = new Date().getTime()
+    }
+
+    const vectorArr = vector.map(point => {
+      if(typeof point === 'string') {
+        let nodeName
+        let nodeProp
+
+        var name = point.match('{(.*?)}')[1]
+
+        if(name) {
+          let splitString = name.split('.')
+          if(splitString.length > 1) {
+            nodeName = splitString[0]
+            nodeProp = splitString[1]
+          }
+        }
+
+        const operator = point.split('')
+        const divOp = operator.filter(char =>  char === '/')
+        const number = point.split('/')
+
+        const getn = number.map(i => parseFloat(i)).filter(h => !isNaN(h) && typeof h === 'number')
+
+        if(nodeName && nodeProp && divOp.length > 0 && getn.length > 0) {
+          let value
+          if(this.nodesss.length > 0) {
+            this.nodesss.forEach(node => {
+              if(node.name === nodeName) {
+                if(nodeProp === 'w') {
+                  value = node.view.cachedNodeSize[0]
+                }
+
+                if(nodeProp === 'h') {
+                  value = node.view.cachedNodeSize[1]
+                }
+              }
+            })
+          } else {
+            return 1
+          }
+
+          if(divOp[0] === '/') {
+            return value / getn[0]
+          }
+
+        }
+
+
+      }
+
+      return point
+    })
+
+    this.scaleOrigin[0] = vectorArr[3]
+    this.scaleOrigin[1] = vectorArr[4]
+
+    const [x = 1, y = 1, z = 1] = vectorArr
+    this.scale.set([x, y, z], transition)
   },
   setEventHandler (event, handler) {
     if (this.background) {
@@ -170,6 +317,11 @@ export default View.extend({
     }
   },
   updateRotation (rotation, transition, cb) {
+    if(!this.transformOrder.includes('rotate')) {
+      this.transformOrder.push('rotate')
+      this.transformOrderObject['rotate'] = new Date().getTime()
+    }
+
     let callback = cb
     let [degrees, x = 0, y = 0, z = 0] = rotation
     
@@ -187,14 +339,23 @@ export default View.extend({
       callback
     )
   },
-  setAlignment (alignment) {
-    // this.align.set([0.0, 0.0])
-    // this.origin.set([0.0, 0.0])
-  },
   updateSize(size) {
     this.zise.set(size)
   }
 })
+
+function parseVector(vector) {
+  return vector.map(point => {
+    if(typeof point === "string") {
+      const spl = point.split('.')
+      if(spl.length > 1) {
+        return {node: spl[0], prop: spl[1]}
+      }
+    }
+
+    return point
+  })
+}
 
 function getAlignment (align) {
   if (align === undefined) return {}

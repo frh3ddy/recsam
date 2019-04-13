@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 export default class Set extends React.Component {
   constructor (props) {
     super(props)
-    const duration = props.duration || 500
+    const duration = props.duration || 0
     if (props.easing) {
       this.transition = getTransition(props)
     } else {
@@ -19,22 +19,9 @@ export default class Set extends React.Component {
   }
 
   componentDidMount () {
-    // const { opacity, rotation, translation } = this.props
     const { updateMethod, payload } = getMethod(this.props)
     if (updateMethod === 'noop') return
     this.context.view[updateMethod](payload, this.transition, true)
-
-    // if (rotation) {
-    //   this.context.view.updateOpacity(this.props.opacity)
-    //   return
-    // }
-
-    // if (opacity) {
-    //   this.context.view.updateOpacity(this.props.opacity)
-    //   return
-    // }
-    // this.context.view.updateOpacity(this.props.opacity)
-    // this.props.position.set([this.x, this.y, this.z], this.transition)
   }
 
   componentWillUnmount () {}
@@ -82,7 +69,7 @@ function isAtLeastOneDefined (args) {
 
 function getTransition (props) {
   const {
-    duration = 500,
+    duration = 0,
     easing,
     damping = 0.5,
     velocity = 0,
