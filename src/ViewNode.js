@@ -306,6 +306,9 @@ export default View.extend({
     this.scale.set([x, y, z], transition)
   },
   setEventHandler (event, handler) {
+    //save the handler function to remove the listener
+    this.handler = handler
+
     if (this.background) {
       this.background.on(event, handler)
       this.background.setProperties({ cursor: 'pointer' })
@@ -314,6 +317,17 @@ export default View.extend({
       // TODO: decide if hitTest includes margin, if not then add to margin node
       setTimeout(() => this.ancestor.add(this.bounds), 0)
       this.bounds.on(event, handler)
+    }
+  },
+
+  removeEventHandler (event, handler) {
+    if (this.background) {
+      this.background.off(event, this.handler)
+      this.background.setProperties({ cursor: 'initial'
+    })
+    } else if (this.bounds) {
+      this.bounds.off(event, this.handler)
+      this.bounds.remove()
     }
   },
   updateRotation (rotation, transition, cb) {
@@ -341,6 +355,9 @@ export default View.extend({
   },
   updateSize(size) {
     this.zise.set(size)
+  },
+  updateColor(color) {
+    this.background.setProperties({background: color})
   }
 })
 

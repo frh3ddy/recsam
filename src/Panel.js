@@ -117,6 +117,11 @@ export default class Panel extends React.Component {
       this.view.updateSize([this.props.width, this.props.height])
     }
 
+    if(this.props.color !== prevProps.color) {
+      this.view.updateColor(this.props.color)
+    }
+
+
     if(this.props.opacity !== prevProps.opacity) {
       this.view.updateOpacity(this.props.opacity)
     }
