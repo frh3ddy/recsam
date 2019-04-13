@@ -169,8 +169,8 @@ class App extends Component {
       <Panel color="black">
         <Panel margin='25' width='10%' height='25%'>
           <Image file={pinkBear}/>
-          <Panel height={70} alignment='bottom'>
-            <Text alignment='verticalCenter' textAlignment='center'>
+          <Panel height={130} alignment='bottom'>
+            <Text alignment='verticalCenter' textAlignment='center' color='#ef5fa7' font='Teko' fontSize='75px'>
                 {this.state.teamOneTotalScore}
             </Text>
           </Panel>
@@ -181,16 +181,16 @@ class App extends Component {
         </Panel>
         <Panel width='10%' height='25%' alignment='horizontalCenter' >
           <Image file={heart}/>
-          <Panel height={50} alignment='center'  y={-20} >
-            <Text alignment='verticalCenter' fontSize='30px' textAlignment='center' color='white'>
+          <Panel height={50} alignment='center'  y={-30}>
+            <Text alignment='verticalCenter' fontSize='75px' textAlignment='center' color='white' font='Teko'>
                 {this.state.score}
             </Text>
           </Panel>
         </Panel>
         <Panel margin='25' width='10%' height='25%' alignment='right'>
           <Image file={bear}/>
-          <Panel height={70} alignment='bottom' >
-            <Text alignment='verticalCenter' textAlignment='center'>
+          <Panel height={130} alignment='bottom' >
+            <Text alignment='verticalCenter' textAlignment='center' color='#ef5fa7' font='Teko' fontSize='75px'>
                 {this.state.teamTwoTotalScore}
             </Text>
           </Panel>
@@ -203,7 +203,7 @@ class App extends Component {
           <Background/>
           <Hearts/>
           <Panel width='83%' height='70%' color='#f3f7fa' alignment='center' border='2px solid #6d6c6d' y={40}>
-            <Panel margin='55 30'>
+            <Panel margin='65 30'>
               <StackPanel orientation='vertical' itemSpacing={20}>
                 <Awnsers a={this.state.awnsers}/>
               </StackPanel>

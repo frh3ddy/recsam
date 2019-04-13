@@ -18,32 +18,32 @@ const Awnsers = ({a}) => {
 	    	</WhileTrue>
 	    </Panel>
 	    <StackPanel>
-	     	<Panel width={80}>
-	     		<Text alignment='verticalCenter' textAlignment='center' fontSize='50px' color='white'>{`${index + 1}.-`}</Text>
+	     	<Panel width={60}>
+	     		<Text font='Teko' alignment='verticalCenter' textAlignment='center' fontSize='50px' color='white'>{`${index + 1}`}</Text>
 	     	</Panel>
-	     	<Panel width={2} margin='0 8' opacity={0}>
+	     	<Panel width={4} margin='0 8' opacity={0}>
 	     		<WhileTrue value={!numberOpacity}>
 	     			<Change opacity={1} delay={100}/>
 	     		</WhileTrue> 
-	     		<Panel width={1} color='#CB297B'/>
-	     		<Panel width={1} color='#FF8DC6' x={1}/>
+	     		<Panel width={2} color='#CB297B'/>
+	     		<Panel width={2} color='#FF8DC6' x={2}/>
 	     	</Panel>
 	     	<Panel margin='20 0 0 0'>
-	     		<Text alignment='verticalCenter' textAlignment='left' fontSize='50px' color='white'>{item.text}</Text>
+	     		<Text font='Rajdhani' alignment='verticalCenter' textAlignment='left' fontSize='50px' color='white'>{item.text}</Text>
 	     	</Panel>
-	     	<Panel width={2} margin='0 8' opacity={0}>
+	     	<Panel width={4} margin='0 8' opacity={0}>
 	     		<WhileTrue value={!numberOpacity}>
 	     			<Change opacity={1} delay={400}/>
 	     		</WhileTrue>
-	     		<Panel width={1} color='#CB297B'/>
-	     		<Panel width={1} color='#FF8DC6' x={1}/>
+	     		<Panel width={2} color='#CB297B'/>
+	     		<Panel width={2} color='#FF8DC6' x={2}/>
 	     	</Panel>
 	     	<Panel width={80}>
-	     		<Text alignment='verticalCenter' textAlignment='center' fontSize='50px' color='white'>{item.points}</Text>
+	     		<Text alignment='verticalCenter' textAlignment='center' fontSize='50px' font='Teko' color='white'>{item.points}</Text>
 	     	</Panel>
 	     </StackPanel>
 	     <Panel opacity={numberOpacity}>
-	     	<Text alignment='verticalCenter' textAlignment='center' fontSize='22px' color='#7566f4'>{`${index + 1}`}</Text>
+	     	<Text alignment='verticalCenter' textAlignment='center' fontSize='45px'  font='Teko' color='#7566f4'>{`${index + 1}`}</Text>
 	     </Panel>
 	  </Panel>)
     })
