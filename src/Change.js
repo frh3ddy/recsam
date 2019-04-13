@@ -19,6 +19,18 @@ export default class Change extends React.Component {
     return {namesNodes: this.context.namesNodes}
   }
 
+  shouldComponentUpdate(nextProps) {
+    let shouldUpdate = false
+    for(let key in this.props) {
+      if(this.props[key] !== nextProps[key]) {
+        shouldUpdate = true
+        break
+      }
+    }
+
+    return shouldUpdate
+  }
+
   componentDidUpdate (prevProps) {
     const { updateMethod, payload } = getMethod(this.props)
     if (updateMethod === 'noop') return
@@ -32,7 +44,6 @@ export default class Change extends React.Component {
   }
 
   componentDidMount () {
-    // const { opacity, rotation, translation } = this.props
     const { updateMethod, payload } = getMethod(this.props)
     if (updateMethod === 'noop') return
     setTimeout(() => {
@@ -51,8 +62,6 @@ export default class Change extends React.Component {
     const { updateMethod } = getMethod(props)
     if (updateMethod === 'noop') return
 
-    const duration = props.durationBack || props.duration || 0
-
     if (props.easingBack) {
       props.easing = props.easingBack
       if (props.durationBack) {
@@ -69,6 +78,7 @@ export default class Change extends React.Component {
       updateScale: [1,1,1, 0, 0],
       updateTranslation: this.context.view.cachedTranslation || [0, 0, 0]
     }
+
     this.context.view[updateMethod](defaults[updateMethod], transition)
   }
 

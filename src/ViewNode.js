@@ -85,6 +85,7 @@ export default View.extend({
         )
 
       let scale = Transform.scale(stream.scale)
+      
       let scatrans = Transform.thenMove(Transform.aboutOrigin([scaleOriginX, scaleOriginY], scale), stream.translate)
 
       return Transform.compose(scatrans ,rotate,)
@@ -223,9 +224,9 @@ export default View.extend({
 
           return value
         }
-      } else {
-        return point
       }
+
+      return point
     })
     
     this.translation.set([x, y, z], transition, callback)
@@ -252,7 +253,7 @@ export default View.extend({
         let nodeName
         let nodeProp
 
-        var name = point.match('\{(.*?)\}')[1]
+        var name = point.match('{(.*?)}')[1]
 
         if(name) {
           let splitString = name.split('.')
@@ -350,9 +351,9 @@ function parseVector(vector) {
       if(spl.length > 1) {
         return {node: spl[0], prop: spl[1]}
       }
-    } else {
-      return point
     }
+
+    return point
   })
 }
 
