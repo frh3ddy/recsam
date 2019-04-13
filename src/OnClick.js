@@ -15,7 +15,9 @@ export default class OnClick extends React.Component {
 
   componentDidMount () {}
 
-  componentWillUnmount () {}
+  componentWillUnmount () {
+    this.context.view.removeEventHandler(this.props.event, this.props.signal)
+  }
 
   render () {
     return null

@@ -305,7 +305,14 @@ export default View.extend({
     const [x = 1, y = 1, z = 1] = vectorArr
     this.scale.set([x, y, z], transition)
   },
+  updateScale(vector, transition, callback) {
+    const [x = 0, y = 0, z = 0] = vector
+    this.scale.set([x, y, z], transition)
+  },
   setEventHandler (event, handler) {
+    //save the handler function to remove the listener
+    this.handler = handler
+
     if (this.background) {
       this.background.on(event, handler)
       this.background.setProperties({ cursor: 'pointer' })
@@ -314,6 +321,17 @@ export default View.extend({
       // TODO: decide if hitTest includes margin, if not then add to margin node
       setTimeout(() => this.ancestor.add(this.bounds), 0)
       this.bounds.on(event, handler)
+    }
+  },
+
+  removeEventHandler (event, handler) {
+    if (this.background) {
+      this.background.off(event, this.handler)
+      this.background.setProperties({ cursor: 'initial'
+    })
+    } else if (this.bounds) {
+      this.bounds.off(event, this.handler)
+      this.bounds.remove()
     }
   },
   updateRotation (rotation, transition, cb) {
@@ -341,6 +359,9 @@ export default View.extend({
   },
   updateSize(size) {
     this.zise.set(size)
+  },
+  updateColor(color) {
+    this.background.setProperties({background: color})
   }
 })
 

@@ -15,6 +15,7 @@ export default View.extend({
     textAlignment,
     translation,
     fontSize,
+    font,
     background,
     alignment,
     margin,
@@ -70,10 +71,12 @@ export default View.extend({
     this.surface = new Surface({
       properties: {
         color,
+        'font-family': font,
         background,
         padding,
         'text-align': textAlignment,
-        'font-size': fontSize
+        'font-size': fontSize,
+        'pointer-events': 'none'
       },
       size: this.testsize,
       origin: this.origin,

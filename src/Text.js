@@ -14,7 +14,6 @@ export default class Text extends React.Component {
     if (childrenLenght < 2) {
       text = props.children
     } else {
-      console.log('jsnjnsjnsjn')
       React.Children.forEach(props.children, child => {
         if (typeof child === 'string') {
           text = child
@@ -47,6 +46,7 @@ export default class Text extends React.Component {
       translation: [props.x, props.y, props.z],
       alignment: props.alignment,
       textAlignment: props.textAlignment,
+      font: props.font,
       fontSize: props.fontSize
     })
     context.parent[method](this.surface)
