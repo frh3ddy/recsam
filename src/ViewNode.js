@@ -34,29 +34,17 @@ export default View.extend({
       nodesss,
       layout
     } = options
-
-    this.scaleOrigin = [0, 0]
     this.cachedNodeSize = [0, 0]
-
-    this.transformOrder = []
-    this.transformOrderObject = {}
-
-    this.nodesss = nodesss
-
     this.cacheTransform = undefined
-
-    let ancestor
     this.cachedTranslation = translation
 
+    this.scaleOrigin = [0, 0]
+    this.nodesss = nodesss
 
+    let ancestor
+  
     const [x = 0, y = 0, z = 0] = translation
-
-    // wich transform should be applied first
-    if(x || y || z) {
-      this.transformOrder.push('translate')
-      this.transformOrderObject['translate'] = new Date().getTime()
-    } 
-
+  
     this.scale = new Transitionable([1, 1, 1])
     this.translation = new Transitionable([x, y, z])
     this.rotation = new Transitionable([0, 0, 0])
@@ -197,11 +185,6 @@ export default View.extend({
     })
   },
   updateTranslation (vector, transition, callback) {
-    if(!this.transformOrder.includes('translate')) {
-      this.transformOrder.push('translate')
-      this.transformOrderObject['translate'] = new Date().getTime()
-    }
-
     const [x = 0, y = 0, z = 0] = parseVector(vector).map(point => {
       if(!Array.isArray(point) && typeof point === 'object') {
         if(this.nodesss.length > 0) {
@@ -209,11 +192,19 @@ export default View.extend({
           this.nodesss.forEach(node => {
             if(node.name === point.node) {
               if(point.prop === 'x') {
-                value = (node.view.cacheTransform[12] - this.cacheTransform[12]) + 1
+                if(node.view.cacheTransform && this.cacheTransform) {
+                  value = (node.view.cacheTransform[12] - this.cacheTransform[12]) + 1
+                } else {
+                  value = 0
+                }
               }
 
               if(point.prop === 'y') {
-                value = (node.view.cacheTransform[13] - this.cacheTransform[13]) - 3
+                if(node.view.cacheTransform && this.cacheTransform) {
+                  value = (node.view.cacheTransform[13] - this.cacheTransform[13]) + 3
+                } else {
+                  value = 0
+                }
               }
 
               if(point.prop === 'z') {
@@ -231,10 +222,6 @@ export default View.extend({
     
     this.translation.set([x, y, z], transition, callback)
   },
-  // setTranslation (vector) {
-  //   const [x = 0, y = 0, z = 0] = vector
-  //   this._layoutNode.set({ transform: Transform.translate([x, y, z]) })
-  // },
   updateOpacity (opacity, transition, callback) {
     if(!transition) {
       transition = {duration: 0}
@@ -243,11 +230,6 @@ export default View.extend({
     this.opacity.set(opacity, transition, callback)
   },
   updateScale(vector, transition, callback) {
-    if(!this.transformOrder.includes('scale')) {
-      this.transformOrder.push('scale')
-      this.transformOrderObject['scale'] = new Date().getTime()
-    }
-
     const vectorArr = vector.map(point => {
       if(typeof point === 'string') {
         let nodeName
@@ -290,10 +272,7 @@ export default View.extend({
           if(divOp[0] === '/') {
             return value / getn[0]
           }
-
         }
-
-
       }
 
       return point
@@ -331,11 +310,6 @@ export default View.extend({
     }
   },
   updateRotation (rotation, transition, cb) {
-    if(!this.transformOrder.includes('rotate')) {
-      this.transformOrder.push('rotate')
-      this.transformOrderObject['rotate'] = new Date().getTime()
-    }
-
     let callback = cb
     let [degrees, x = 0, y = 0, z = 0] = rotation
     

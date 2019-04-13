@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 export default class Change extends React.Component {
-  constructor (props) {
+  constructor (props, context) {
     super(props)
     const duration = props.duration || 0
 
@@ -13,10 +13,6 @@ export default class Change extends React.Component {
     } else {
       this.transition = { duration }
     }
-  }
-
-  getChildContext () {
-    return {namesNodes: this.context.namesNodes}
   }
 
   shouldComponentUpdate(nextProps) {
@@ -87,13 +83,8 @@ export default class Change extends React.Component {
   }
 }
 
-Change.childContextTypes = {
-  namesNodes: PropTypes.array
-}
-
 Change.contextTypes = {
   view: PropTypes.object,
-  namesNodes: PropTypes.array
 }
 
 function getMethod ({
