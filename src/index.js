@@ -8,12 +8,18 @@ import registerServiceWorker from './registerServiceWorker'
 import io from 'socket.io-client'
 import App from './App'
 import { SocketProvider } from 'socket.io-react'
+import WebFont from 'webfontloader'
 
 
 // find local ip 
 // ip address terminal comman ---->    ifconfig | grep broadcast
 var socket = io(`http://192.168.1.83:3050`)
 
+WebFont.load({
+  google: {
+    families: ['Teko', 'Rajdhani', 'sans-serif']
+  }
+})
 
 render(
 <SocketProvider socket={socket}>

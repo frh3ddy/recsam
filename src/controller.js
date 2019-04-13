@@ -1,5 +1,4 @@
 import { Controller } from 'cerebral'
-import { wait } from 'cerebral/operators'
 
 function changeTitle ({ state }) {
   state.set('size', { width: 200, height: 150 })
