@@ -45,16 +45,23 @@ let answers = [
   }
 ]
 
+const initialState = {
+  answers,
+  teamPlaying: undefined,
+  strikes: 0
+}
+
 
 class App extends Component {
   constructor(props) {
     super(props)
 
-    this.state = {
-      answers,
-      teamPlaying: undefined,
-      strikes: 0
-    }
+    this.state = initialState
+
+    props.socket.emit('appRestarted')
+    props.socket.on('restartApp', () => {
+      this.setState(state => initialState)
+    })
   }
 
   sendScore({points, text}, index) {
