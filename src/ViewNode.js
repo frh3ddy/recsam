@@ -37,6 +37,7 @@ export default View.extend({
     this.cachedNodeSize = [0, 0]
     this.cacheTransform = undefined
     this.cachedTranslation = translation
+    this.cachedOpacity = _opacity
 
     this.scaleOrigin = [0, 0]
     this.nodesss = nodesss
@@ -225,7 +226,6 @@ export default View.extend({
   updateOpacity (opacity, transition, callback) {
     if(!transition) {
       transition = {duration: 0}
-      console.log(transition)
     }
     this.opacity.set(opacity, transition, callback)
   },
