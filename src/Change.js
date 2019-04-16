@@ -69,7 +69,8 @@ export default class Change extends React.Component {
     }
 
     const defaults = {
-      updateOpacity: this.context.view.cachedOpacity || 1,
+      //Todo This may not be the best solution to remove change opacity
+      updateOpacity: this.context.view.cachedOpacity >=0 ? this.context.view.cachedOpacity : 1,
       updateRotation: [0, 0, 0, 0],
       updateScale: [1,1,1, 0, 0],
       updateTranslation: this.context.view.cachedTranslation || [0, 0, 0]
