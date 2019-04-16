@@ -37,6 +37,7 @@ export default View.extend({
     this.cachedNodeSize = [0, 0]
     this.cacheTransform = undefined
     this.cachedTranslation = translation
+    this.cachedOpacity = _opacity
 
     this.scaleOrigin = [0, 0]
     this.nodesss = nodesss
