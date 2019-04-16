@@ -21,6 +21,7 @@ import awnsersData from './babyShowerComponents/awnsersData'
 //sounds
 import incorrecto from './sounds/Error.wav'
 import reveal from './sounds/reveal_sound_effect.wav'
+import babyCry from './sounds/girl_crying.mp3'
 
 //Images
 import bear from './images/bear.png'
@@ -34,11 +35,7 @@ import heart from './images/noun_Heart_1724390.svg'
 const Panel = createNamedComponent()
 const StackPanel = createNamedComponent('FlexStackPanel')
 
-class App extends Component {
-  constructor(props) {
-    super(props)
-
-    this.state = {
+const initialState = {
       strikeTeam: false,
       currentTop: undefined,
       wrongAwnser: false,
@@ -50,18 +47,36 @@ class App extends Component {
       showStrike: false,
       strikes: 0,
       revealSound: false,
+      revealBackup: false,
       revealAnswers: false,
       awnsers: awnsersData
     }
 
+class App extends Component {
+  constructor(props) {
+    super(props)
+
+    this.state = initialState
+
     this.stopRevealSound = this.stopRevealSound.bind(this)
+    props.socket.emit('appRestarted')
+    props.socket.on('restartApp', () => {
+
+      this.setState(state => {
+        initialState.awnsers = awnsersData.map(awnser => {
+          return {text: 'Placeholder', points: '0'}
+        })
+
+        return initialState
+      })
+    })
   }
 
   stopRevealSound() {
     this.setState((state, _) => {
-      console.log('revealSound')
       return {
-        revealSound: false
+        revealSound: false,
+        revealBackup: false,
       }
     })
   }
@@ -101,6 +116,7 @@ class App extends Component {
         if(state.revealAnswers) {
           return {
             revealSound: true,
+            revealBackup: state.revealSound,
             awnsers: state.awnsers
           }
         }
@@ -113,12 +129,14 @@ class App extends Component {
             [scoreTeamPlaying]: state.score + parseInt(payload.points, 10),
             score: 0,
             revealSound: true,
+            revealBackup: state.revealSound,
             revealAnswers: true
           }
         }
 
         return {
             revealSound: true,
+            revealBackup: state.revealSound,
             awnsers: state.awnsers,
             score: state.score + parseInt(payload.points, 10)
           }
@@ -133,6 +151,8 @@ class App extends Component {
 
         if(state.revealAnswers) {
           return {
+            revealSound: true,
+            revealBackup: state.revealSound,
             awnsers: state.awnsers
           }
         }
@@ -140,6 +160,7 @@ class App extends Component {
         return {
           revealAnswers: true,
           revealSound: true,
+          revealBackup: state.revealSound,
           awnsers: state.awnsers,
           [teamPlaying]: state.score += parseInt(payload.points, 10),
           score: 0
@@ -189,6 +210,8 @@ class App extends Component {
     return <Context>
       <Sound url={incorrecto} autoLoad={true} playStatus={this.state.showStrike ? Sound.status.PLAYING : Sound.status.STOPPED}/>
       <Sound url={reveal} autoLoad={true} playStatus={this.state.revealSound ? Sound.status.PLAYING : Sound.status.STOPPED} onFinishedPlaying={() => this.stopRevealSound()}/>
+      <Sound url={reveal} autoLoad={true} playStatus={this.state.revealBackup ? Sound.status.PLAYING : Sound.status.STOPPED} onFinishedPlaying={() => this.stopRevealSound()}/>
+      <Sound url={babyCry} autoLoad={true} playStatus={this.state.strikeTeam ? Sound.status.PLAYING : Sound.status.STOPPED}/>
       <Panel color="black">
         <Panel margin='25' width='10%' height='25%'>
           <Image file={pinkBear}/>
@@ -199,7 +222,7 @@ class App extends Component {
           </Panel>
           <WhileTrue value={this.state.teamPlaying === 2}>
             <Change scaleX={.5} scaleY={.5} easing='easeOutBounce' duration={300} testunmpunt={true}/>
-            <Change opacity={.3} duration={300}/>
+            <Change opacity={1} duration={300}/>
           </WhileTrue>
         </Panel>
         <Panel width='10%' height='25%' alignment='horizontalCenter' >
@@ -219,7 +242,7 @@ class App extends Component {
           </Panel>
           <WhileTrue value={this.state.teamPlaying === 1}>
             <Change scaleX={.5} scaleY={.5} easing='easeOutBounce' duration={300}/>
-            <Change opacity={.3} duration={300}/>
+            <Change opacity={1} duration={300}/>
           </WhileTrue>
         </Panel>
         <Panel width='70%' height='65%' alignment='center' y={25}>
@@ -278,8 +301,8 @@ class App extends Component {
             <Change scaleX={5} scaleY={(4.5)}/>
             <Change scaleX={1} scaleY={(1)} easing='easeOutCubic' duration={500} />
             <Change opacity={1} duration={500} />
-            <Change scaleX='{strike1.w} / 300' scaleY='{strike1.h} / 340 )' aboutOrigin={[-.5, -.5]} delay={1000} easing='easeInCubic' duration={300}/>
-            <Change x={`strike${this.state.strikes + 1}.x`} y={`strike${this.state.strikes + 1}.y`} z={10} delay={1000} easing='easeOutWall' duration={800} callback={() => this.setStrike()}/>
+            <Change scaleX='{strike1.w} / 300' scaleY='{strike1.h} / 340 )' aboutOrigin={[-.5, -.5]} delay={1300} easing='easeInCubic' duration={300}/>
+            <Change x={`strike${this.state.strikes + 1}.x`} y={`strike${this.state.strikes + 1}.y`} z={10} delay={1300} easing='easeOutWall' duration={800} callback={() => this.setStrike()}/>
           </Panel>
         </WhileTrue>
 
