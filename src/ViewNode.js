@@ -226,7 +226,6 @@ export default View.extend({
   updateOpacity (opacity, transition, callback) {
     if(!transition) {
       transition = {duration: 0}
-      console.log(transition)
     }
     this.opacity.set(opacity, transition, callback)
   },
