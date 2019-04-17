@@ -17,7 +17,7 @@ import strikeBaby from './images/strikeBaby.png'
 const Panel = createNamedComponent()
 const StackPanel = createNamedComponent('FlexStackPanel')
 
-let answers = [
+let awnsers = [
   {
       text:'Hago bien mi trabajo',
       points: '34',
@@ -46,7 +46,7 @@ let answers = [
 ]
 
 const initialState = {
-  answers,
+  awnsers,
   teamPlaying: undefined,
   strikes: 0
 }
@@ -60,23 +60,29 @@ class App extends Component {
 
     props.socket.emit('appRestarted')
     props.socket.on('restartApp', () => {
-      this.setState(state => initialState)
+      this.setState(state => {
+        initialState.awnsers = awnsers.map(awnser => {
+          awnser.done = false
+          return awnser
+        })
+        return initialState
+      })
     })
   }
 
   sendScore({points, text}, index) {
     let allDone = false
     this.setState((state, props) => {
-      state.answers[index].done = true
-      allDone = state.answers.every(item => item.done)
+      state.awnsers[index].done = true
+      allDone = state.awnsers.every(item => item.done)
 
       if(allDone && state.teamPlaying === undefined) {
-        state.answers[index].done = false
+        state.awnsers[index].done = false
         return null
       }
 
       return {
-        answers: state.answers
+        awnsers: state.awnsers
       }
     })
 
@@ -181,17 +187,17 @@ class App extends Component {
               <Panel margin='50 20'>
                 <StackPanel orientation='vertical' itemSpacing={20}>
                   <Text padding='10px 0 0' height={true} fontSize='25px' font='Teko' color='#d1d0d5' textAlignment='center'> 
-                    Most Popular Answers
+                    Most Popular Awnsers
                   </Text>
 
-                  {this.state.answers.map((item, index) => {
-                    let done = this.state.answers[index].done
+                  {this.state.awnsers.map((item, index) => {
+                    let done = this.state.awnsers[index].done
                     return (
                       <Panel color='#355af0' opacity={done ? .3 : 1} key={index}>
                         <Text padding='0 0 0 20px' alignment='verticalCenter' textAlignment='left' font='Rajdhani' fontSize='18px' color='white'>
                           {item.text}
                         </Text>
-                        {this.state.answers[index].done ? 
+                        {this.state.awnsers[index].done ? 
                           null: <On event='click' signal={() => this.sendScore(item, index)}/>
                         }
                       </Panel>
