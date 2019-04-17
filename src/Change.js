@@ -30,10 +30,13 @@ export default class Change extends React.Component {
   componentDidUpdate (prevProps) {
     const { updateMethod, payload } = getMethod(this.props)
     if (updateMethod === 'noop') return
+
+    let transition = this.props.easing ? getTransition(this.props) : { duration: this.props.duration }
+    
     setTimeout(() => {
       this.context.view[updateMethod](
       payload,
-      this.transition,
+      transition,
       this.props.callback
     )
     }, this.delay)
@@ -58,15 +61,9 @@ export default class Change extends React.Component {
     const { updateMethod } = getMethod(props)
     if (updateMethod === 'noop') return
 
-    if (props.easingBack) {
-      props.easing = props.easingBack
-      if (props.durationBack) {
-        props.duration = props.durationBack
-      }
-      transition = getTransition(props)
-    } else {
-      transition = getTransition(props)
-    }
+    props.easing = props.easingBack || props.easing
+    props.duration = props.durationBack !== undefined ? props.durationBack : props.duration
+    transition = getTransition(props)
 
     const defaults = {
       //TODO: This may not be the best solution to remove change opacity
