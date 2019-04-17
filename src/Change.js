@@ -30,10 +30,13 @@ export default class Change extends React.Component {
   componentDidUpdate (prevProps) {
     const { updateMethod, payload } = getMethod(this.props)
     if (updateMethod === 'noop') return
+
+    let transition = this.props.easing ? getTransition(this.props) : { duration: this.props.duration }
+    
     setTimeout(() => {
       this.context.view[updateMethod](
       payload,
-      this.transition,
+      transition,
       this.props.callback
     )
     }, this.delay)
@@ -58,21 +61,16 @@ export default class Change extends React.Component {
     const { updateMethod } = getMethod(props)
     if (updateMethod === 'noop') return
 
-    if (props.easingBack) {
-      props.easing = props.easingBack
-      if (props.durationBack) {
-        props.duration = props.durationBack
-      }
-      transition = getTransition(props)
-    } else {
-      transition = getTransition(props)
-    }
+    props.easing = props.easingBack || props.easing
+    props.duration = props.durationBack !== undefined ? props.durationBack : props.duration
+    transition = getTransition(props)
 
     const defaults = {
-      //Todo This may not be the best solution to remove change opacity
+      //TODO: This may not be the best solution to remove change opacity
       updateOpacity: this.context.view.cachedOpacity >=0 ? this.context.view.cachedOpacity : 1,
       updateRotation: [0, 0, 0, 0],
-      updateScale: [1,1,1, 0, 0],
+      //TODO: It may need to reset the scaleOrigin in the view
+      updateScale: [1,1,1, ...this.context.view.scaleOrigin],
       updateTranslation: this.context.view.cachedTranslation || [0, 0, 0]
     }
 
