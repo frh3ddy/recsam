@@ -11,8 +11,12 @@ const Awnsers = ({a}) => {
     	let numberOpacity = parseInt(item.points, 10) > 0 ? 0 : 1
 
     	return (<Panel key={index}>
-	    <Panel color='#ef5fa7' cornerRadius='5px'/>
-	    <Panel color='white' cornerRadius='5px'>
+	    <Panel color='#ef5fa7' cornerRadius='5px' opacity={0}>
+	    	<WhileTrue value={!numberOpacity}>
+	     		<Change opacity={1} duration={500} easing='easeInOutCubic' durationBack={700}/>
+	     	</WhileTrue>
+	    </Panel>
+	    <Panel color='white' cornerRadius='5px' >
 	    	<WhileTrue value={parseInt(item.points, 10) > 0}>
 	    		<Change scaleX={0} duration={500} aboutOrigin={[1, 0]} easing='easeInOutCubic'/>
 	    	</WhileTrue>
@@ -23,7 +27,7 @@ const Awnsers = ({a}) => {
 	     	</Panel>
 	     	<Panel width={4} margin='0 8' opacity={0}>
 	     		<WhileTrue value={!numberOpacity}>
-	     			<Change opacity={1} delay={100}/>
+	     			<Change opacity={1} delay={200} duration={470} durationBack={0}/>
 	     		</WhileTrue> 
 	     		<Panel width={2} color='#CB297B'/>
 	     		<Panel width={2} color='#FF8DC6' x={2}/>
@@ -42,7 +46,10 @@ const Awnsers = ({a}) => {
 	     		<Text alignment='verticalCenter' textAlignment='center' fontSize='50px' font='Teko' color='white'>{item.points}</Text>
 	     	</Panel>
 	     </StackPanel>
-	     <Panel opacity={numberOpacity}>
+	     <Panel>
+	     	<WhileTrue value={!numberOpacity}>
+	     		<Change opacity={0} duration={300} durationBack={1200}/>
+	     	</WhileTrue>
 	     	<Text alignment='verticalCenter' textAlignment='center' fontSize='45px'  font='Teko' color='#7566f4'>{`${index + 1}`}</Text>
 	     </Panel>
 	  </Panel>)

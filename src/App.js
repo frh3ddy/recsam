@@ -21,7 +21,7 @@ import awnsersData from './babyShowerComponents/awnsersData'
 //sounds
 import incorrecto from './sounds/Error.wav'
 import reveal from './sounds/reveal_sound_effect.wav'
-import babyCry from './sounds/girl_crying.mp3'
+import babyCry from './sounds/girl_crying-edited.mp3'
 
 //Images
 import bear from './images/bear.png'
@@ -49,21 +49,21 @@ const initialState = {
       revealSound: false,
       revealBackup: false,
       revealAnswers: false,
-      awnsers: awnsersData
+      awnsers: awnsersData,
+      restarted: false
     }
 
 class App extends Component {
   constructor(props) {
     super(props)
-
     this.state = initialState
 
     this.stopRevealSound = this.stopRevealSound.bind(this)
     props.socket.emit('appRestarted')
     props.socket.on('restartApp', () => {
-
       this.setState(state => {
-        initialState.awnsers = awnsersData.map(awnser => {
+          initialState.restarted = true
+          initialState.awnsers = awnsersData.map(awnser => {
           return {text: 'Placeholder', points: '0'}
         })
 
@@ -72,11 +72,18 @@ class App extends Component {
     })
   }
 
-  stopRevealSound() {
+  stopRevealSound(num) {
     this.setState((state, _) => {
-      return {
-        revealSound: false,
-        revealBackup: false,
+      if(num === 1) {
+        return {
+          revealSound: false,
+        }
+      }
+
+      if(num === 2) {
+        return {
+          revealBackup: false,
+        }
       }
     })
   }
@@ -207,22 +214,40 @@ class App extends Component {
   }
 
   render() {
+    let bebitaX
+    let moveDuration = 600
+
+    if(this.state.teamPlaying !== undefined) {
+      moveDuration = 1200
+    }
+
+    if(this.state.teamPlaying === 2) {
+      bebitaX = 400
+    } else if(this.state.teamPlaying === 1) {
+      bebitaX = -400
+    } else {
+      bebitaX = 0
+      if(this.state.restarted === false) {
+        moveDuration = 0
+      }
+    }
+
     return <Context>
       <Sound url={incorrecto} autoLoad={true} playStatus={this.state.showStrike ? Sound.status.PLAYING : Sound.status.STOPPED}/>
-      <Sound url={reveal} autoLoad={true} playStatus={this.state.revealSound ? Sound.status.PLAYING : Sound.status.STOPPED} onFinishedPlaying={() => this.stopRevealSound()}/>
-      <Sound url={reveal} autoLoad={true} playStatus={this.state.revealBackup ? Sound.status.PLAYING : Sound.status.STOPPED} onFinishedPlaying={() => this.stopRevealSound()}/>
+      <Sound url={reveal} playbackRate={1.5} autoLoad={true} playStatus={this.state.revealSound ? Sound.status.PLAYING : Sound.status.STOPPED} onFinishedPlaying={() => this.stopRevealSound(1)}/>
+      <Sound url={reveal} playbackRate={1.5} autoLoad={true} playStatus={this.state.revealBackup ? Sound.status.PLAYING : Sound.status.STOPPED} onFinishedPlaying={() => this.stopRevealSound(2)}/>
       <Sound url={babyCry} autoLoad={true} playStatus={this.state.strikeTeam ? Sound.status.PLAYING : Sound.status.STOPPED}/>
       <Panel color="black">
-        <Panel margin='25' width='10%' height='25%'>
+        <Panel margin='25' width='10%' height='20%'>
           <Image file={pinkBear}/>
-          <Panel height={130} alignment='bottom'>
+          <Panel height={110} alignment='bottom'>
             <Text alignment='verticalCenter' textAlignment='center' color='#ef5fa7' font='Teko' fontSize='75px'>
                 {this.state.teamOneTotalScore}
             </Text>
           </Panel>
-          <WhileTrue value={this.state.teamPlaying === 2}>
-            <Change scaleX={.5} scaleY={.5} easing='easeOutBounce' duration={300} testunmpunt={true}/>
-            <Change opacity={1} duration={300}/>
+
+          <WhileTrue value={this.state.teamPlaying === 2 || this.state.teamPlaying === undefined}>
+            <Change scaleX={.5} scaleY={.5} aboutOrigin={[.5, .5]} easing='easeOutBounce' duration={900}/>
           </WhileTrue>
         </Panel>
         <Panel width='10%' height='25%' alignment='horizontalCenter' >
@@ -233,16 +258,15 @@ class App extends Component {
             </Text>
           </Panel>
         </Panel>
-        <Panel margin='25' width='10%' height='25%' alignment='right'>
+        <Panel margin='25' width='10%' height='20%' alignment='right'>
           <Image file={bear}/>
-          <Panel height={130} alignment='bottom' >
+          <Panel height={110} alignment='bottom' >
             <Text alignment='verticalCenter' textAlignment='center' color='#ef5fa7' font='Teko' fontSize='75px'>
                 {this.state.teamTwoTotalScore}
             </Text>
           </Panel>
-          <WhileTrue value={this.state.teamPlaying === 1}>
-            <Change scaleX={.5} scaleY={.5} easing='easeOutBounce' duration={300}/>
-            <Change opacity={1} duration={300}/>
+          <WhileTrue value={this.state.teamPlaying === 1 || this.state.teamPlaying === undefined}>
+            <Change scaleX={.5} scaleY={.5} aboutOrigin={[-.5, .5]} easing='easeOutBounce' duration={900}/>
           </WhileTrue>
         </Panel>
         <Panel width='70%' height='65%' alignment='center' y={25}>
@@ -254,7 +278,8 @@ class App extends Component {
                 <Awnsers a={this.state.awnsers}/>
               </StackPanel>
             </Panel>
-            <Panel width={125} height={150} alignment='horizontalCenter' y={-130}>
+            <Panel width={125} height={150} alignment='horizontalCenter'>
+              <Change x={bebitaX} duration={moveDuration} y={-130} easing="easeInOutCubic"/>
               <Image file={bebita}/>
             </Panel>
             <Panel width={70} height={55} x={-27} y={-20}>
