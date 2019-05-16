@@ -13,7 +13,7 @@ import WebFont from 'webfontloader'
 
 // find local ip 
 // ip address terminal comman ---->    ifconfig | grep broadcast
-var socket = io(`http://192.168.1.83:3050`)
+var socket = io(`http://192.168.0.15:3050`)
 
 WebFont.load({
   google: {

@@ -21,32 +21,31 @@ const Awnsers = ({a}) => {
 	    		<Change scaleX={0} duration={500} aboutOrigin={[1, 0]} easing='easeInOutCubic'/>
 	    	</WhileTrue>
 	    </Panel>
-	    <StackPanel>
-	     	<Panel width={60}>
-	     		<Text font='Teko' alignment='verticalCenter' textAlignment='center' fontSize='50px' color='white'>{`${index + 1}`}</Text>
-	     	</Panel>
-	     	<Panel width={4} margin='0 8' opacity={0}>
-	     		<WhileTrue value={!numberOpacity}>
-	     			<Change opacity={1} delay={200} duration={470} durationBack={0}/>
-	     		</WhileTrue> 
-	     		<Panel width={2} color='#CB297B'/>
-	     		<Panel width={2} color='#FF8DC6' x={2}/>
-	     	</Panel>
-	     	<Panel margin='20 0 0 0'>
-	     		<Text font='Rajdhani' alignment='verticalCenter' textAlignment='left' fontSize='50px' color='white'>{item.text}</Text>
-	     	</Panel>
-	     	<Panel width={4} margin='0 8' opacity={0}>
-	     		<WhileTrue value={!numberOpacity}>
-	     			<Change opacity={1} delay={400}/>
-	     		</WhileTrue>
-	     		<Panel width={2} color='#CB297B'/>
-	     		<Panel width={2} color='#FF8DC6' x={2}/>
-	     	</Panel>
-	     	<Panel width={80}>
-	     		<Text alignment='verticalCenter' textAlignment='center' fontSize='50px' font='Teko' color='white'>{item.points}</Text>
-	     	</Panel>
-	     </StackPanel>
-	     <Panel>
+	    <Panel opacity={0}>
+	    	<StackPanel>
+		     	<Panel width={60}>
+		     		<Text font='Teko' alignment='verticalCenter' textAlignment='center' fontSize='50px' color='white'>{`${index + 1}`}</Text>
+		     	</Panel>
+		     	<Panel width={4} margin='0 8'>
+		     		<Panel width={2} color='#CB297B'/>
+		     		<Panel width={2} color='#FF8DC6' x={2}/>
+		     	</Panel>
+		     	<Panel margin='20 0 0 0'>
+		     		<Text font='Rajdhani' alignment='verticalCenter' textAlignment='left' fontSize='50px' color='white'>{item.text}</Text>
+		     	</Panel>
+		     	<Panel width={4} margin='0 8'>
+		     		<Panel width={2} color='#CB297B'/>
+		     		<Panel width={2} color='#FF8DC6' x={2}/>
+		     	</Panel>
+		     	<Panel width={80}>
+		     		<Text alignment='verticalCenter' textAlignment='center' fontSize='50px' font='Teko' color='white'>{item.points}</Text>
+		     	</Panel>
+		    </StackPanel>
+		    <WhileTrue value={!numberOpacity}>
+     			<Change opacity={1} delay={200} duration={470} durationBack={0}/>
+     		</WhileTrue> 
+	    </Panel>
+	    <Panel>
 	     	<WhileTrue value={!numberOpacity}>
 	     		<Change opacity={0} duration={300} durationBack={1200}/>
 	     	</WhileTrue>
