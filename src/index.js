@@ -5,15 +5,9 @@ import { Container } from '@cerebral/react'
 import controller from './controller'
 import './index.css'
 import registerServiceWorker from './registerServiceWorker'
-import io from 'socket.io-client'
 import App from './App'
-import { SocketProvider } from 'socket.io-react'
 import WebFont from 'webfontloader'
 
-
-// find local ip 
-// ip address terminal comman ---->    ifconfig | grep broadcast
-var socket = io(`http://192.168.0.15:3050`)
 
 WebFont.load({
   google: {
@@ -22,11 +16,9 @@ WebFont.load({
 })
 
 render(
-<SocketProvider socket={socket}>
-  <Container controller={controller}>
+<Container controller={controller}>
     <App />
-  </Container>
-  </SocketProvider>,
+  </Container>,
   document.querySelector('#root')
 )
 
