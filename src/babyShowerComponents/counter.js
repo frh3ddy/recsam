@@ -16,7 +16,7 @@ class Counter extends React.Component {
 		this.state = {
 			start: false,
 			done: false,
-			number: 1,
+			number: 0,
 			placeholder: 2,
 			y: 0,
 			placeholderY: 50
